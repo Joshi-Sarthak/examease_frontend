@@ -7,6 +7,7 @@ import { TestData } from '../models/test.model';
 })
 export class LocalStorageService {
   private classroomsKey = 'classrooms';
+  private userRoleKey = 'userRole';
 
   constructor() {}
 
@@ -14,29 +15,74 @@ export class LocalStorageService {
     return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
   }
 
-  // ---------- Classroom Methods ----------
-  getClassrooms(): ClassroomData[] {
+  private getLocalStorageItem<T>(key: string, defaultValue: T): T {
     if (this.isBrowser) {
-      const classrooms = localStorage.getItem(this.classroomsKey);
-      return classrooms ? JSON.parse(classrooms) : [];
+      try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultValue;
+      } catch (error) {
+        console.error(`Error reading key "${key}" from localStorage:`, error);
+      }
     }
-    return [];
+    return defaultValue;
   }
 
-  saveClassroom(classroom: ClassroomData): void {
-    const classrooms = this.getClassrooms();
-    classrooms.push(classroom);
-    localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
+  private setLocalStorageItem(key: string, value: any): void {
+    if (this.isBrowser) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (error) {
+        console.error(`Error saving key "${key}" to localStorage:`, error);
+      }
+    }
   }
 
-  // Add this method to find a classroom by its code
+  // ---------- Classroom Methods ----------
+  getClassrooms(classroomId: string, userName: string): ClassroomData[] {
+    return this.getLocalStorageItem<ClassroomData[]>(this.classroomsKey, []);
+  }
+
+  createClassroom(classroomId: string, classroomName: string, teacherName: string): void {
+    const classrooms = this.getClassrooms(classroomId, teacherName);
+    const newClassroom: ClassroomData = {
+      classroomId,
+      classroomName,
+      classroomCode: Math.floor(100000 + Math.random() * 900000).toString(),
+      createdAt: new Date(),
+      role: 'teacher',
+      students: [],
+    };
+    classrooms.push(newClassroom);
+    this.setLocalStorageItem(this.classroomsKey, classrooms);
+    this.setLocalStorageItem(this.userRoleKey, { [classroomId]: 'teacher' }); // Store user role per classroom
+  }
+
   getClassroomByCode(classroomCode: string): ClassroomData | undefined {
-    return this.getClassrooms().find(c => c.classroomCode === classroomCode);
+      return this.getClassrooms('', '').find(c => c.classroomCode === classroomCode);
+  }
+
+  joinClassroom(classroomCode: string, userName: string): ClassroomData | undefined {
+    const classrooms = this.getClassrooms('', userName);
+    const classroom = classrooms.find(c => c.classroomCode === classroomCode);
+    if (classroom) {
+      if (!classroom.students.includes(userName)) {
+        classroom.students.push(userName);
+        this.setLocalStorageItem(this.classroomsKey, classrooms);
+        this.setLocalStorageItem(this.userRoleKey, { [classroom.classroomId]: 'student' }); // Store user role per classroom
+      }
+      return classroom;
+    }
+    return undefined;
+  }
+
+  getUserRole(classroomId: string): 'teacher' | 'student' | null {
+    const roles = this.getLocalStorageItem<Record<string, 'teacher' | 'student'>>(this.userRoleKey, {});
+    return roles[classroomId] || null;
   }
 
   // ---------- Test Methods ----------
   getTestsForClassroom(classroomId: string): TestData[] {
-    return JSON.parse(localStorage.getItem(`tests_${classroomId}`) || '[]');
+    return this.getLocalStorageItem<TestData[]>(`tests_${classroomId}`, []);
   }
 
   saveTest(test: TestData): void {
@@ -47,11 +93,10 @@ export class LocalStorageService {
     } else {
       tests.push(test);
     }
-    localStorage.setItem(`tests_${test.classroomId}`, JSON.stringify(tests));
+    this.setLocalStorageItem(`tests_${test.classroomId}`, tests);
   }
 
   getTest(testId: string, classroomId: string): TestData | undefined {
-    const tests = this.getTestsForClassroom(classroomId);
-    return tests.find(t => t.testId === testId);
+    return this.getTestsForClassroom(classroomId).find(t => t.testId === testId);
   }
 }

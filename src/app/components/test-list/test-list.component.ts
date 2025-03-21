@@ -12,9 +12,16 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./test-list.component.css']
 })
 export class TestListComponent {
+startTest(arg0: string) {
+throw new Error('Method not implemented.');
+}
+deleteTest(arg0: string) {
+throw new Error('Method not implemented.');
+}
   classroomId: string = '';
   tests: TestData[] = [];
   dropdownOpen: { [testId: string]: boolean } = {};
+  userRole: 'teacher' | 'student' | null = null; // Store user role
 
   constructor(
     private route: ActivatedRoute,
@@ -23,6 +30,7 @@ export class TestListComponent {
   ) {
     this.classroomId = this.route.snapshot.paramMap.get('classroomId') || '';
     this.tests = this.localStorageService.getTestsForClassroom(this.classroomId);
+    this.userRole = this.localStorageService.getUserRole(this.classroomId); // Get user role
   }
 
   goBack(): void {
@@ -30,7 +38,9 @@ export class TestListComponent {
   }
 
   navigateToQuestionBuilder(): void {
-    this.router.navigate(['/question-builder', this.classroomId]);
+    if (this.userRole === 'teacher') {
+      this.router.navigate(['/question-builder', this.classroomId]);
+    }
   }
 
   toggleDropdown(testId: string, event: Event): void {
@@ -39,6 +49,8 @@ export class TestListComponent {
   }
 
   editTest(testId: string): void {
-    this.router.navigate(['/question-builder', this.classroomId, testId]);
+    if (this.userRole === 'teacher') {
+      this.router.navigate(['/question-builder', this.classroomId, testId]);
+    }
   }
 }

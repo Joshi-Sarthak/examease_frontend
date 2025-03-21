@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
-import { McqTestComponent } from './mcq-test/mcq-test.component';
+
 
 @Component({
   selector: 'app-root',

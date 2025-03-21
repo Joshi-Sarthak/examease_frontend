@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
 interface Question {
   question: string;
   options: string[];
@@ -10,7 +12,7 @@ interface Question {
 @Component({
   selector: 'app-mcq-test',
   templateUrl: './test-page.component.html',
-  imports : [CommonModule],
+  imports: [CommonModule],
   styleUrls: ['./test-page.component.css']
 })
 export class McqTestComponent implements OnInit {
@@ -38,9 +40,11 @@ export class McqTestComponent implements OnInit {
   ];
 
   currentQuestionIndex: number = 0;
-  score: number | null = null;
   timeLeft: number = 300; // 5 minutes
   timer: any;
+score: any;
+
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.startTimer();
@@ -66,13 +70,10 @@ export class McqTestComponent implements OnInit {
 
   submitTest() {
     clearInterval(this.timer);
-    let correctCount = 0;
-    this.questions.forEach(q => {
-      if (q.selectedAnswer === q.correctAnswer) {
-        correctCount++;
-      }
-    });
-    this.score = correctCount;
+    let correctCount = this.questions.filter(q => q.selectedAnswer === q.correctAnswer).length;
+    
+    // Navigate to result page with score and total questions
+    this.router.navigate(['/result-page', { score: correctCount, total: this.questions.length }]);
   }
 
   formatTime(seconds: number): string {

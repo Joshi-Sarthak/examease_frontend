@@ -11,12 +11,12 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule],
   templateUrl: './classroom-list.component.html',
   styleUrls: ['./classroom-list.component.css']
-  
 })
 export class ClassroomListComponent {
   classrooms: ClassroomData[] = [];
   classroomName: string = '';
   classroomCode: string = '';
+  userName: string = ''; // Add username input
 
   showCreatePrompt: boolean = false;
   showJoinPrompt: boolean = false;
@@ -25,7 +25,7 @@ export class ClassroomListComponent {
     private localStorageService: LocalStorageService,
     private router: Router
   ) {
-    this.classrooms = this.localStorageService.getClassrooms();
+    this.classrooms = this.localStorageService.getClassrooms('', this.userName);
   }
 
   toggleCreatePrompt(): void {
@@ -37,26 +37,25 @@ export class ClassroomListComponent {
   }
 
   createClassroom(): void {
-    if (!this.classroomName.trim()) {
-      alert("Enter a valid classroom name!");
+    if (!this.classroomName.trim() || !this.userName.trim()) {
+      alert("Enter a valid classroom name and your name!");
       return;
     }
-
-    const classroom: ClassroomData = {
-      classroomId: Date.now().toString(),
-      classroomName: this.classroomName,
-      classroomCode: Math.floor(100000 + Math.random() * 900000).toString(),
-      createdAt: new Date(),
-    };
-
-    this.localStorageService.saveClassroom(classroom);
-    this.classrooms.push(classroom);
+  
+    const classroomId = Date.now().toString();
+    this.localStorageService.createClassroom(classroomId, this.classroomName, this.userName);
+    this.classrooms = this.localStorageService.getClassrooms('', this.userName); // Refresh list
     this.classroomName = '';
     this.showCreatePrompt = false;
   }
-
+  
   joinClassroom(): void {
-    const classroom = this.localStorageService.getClassroomByCode(this.classroomCode);
+    if (!this.classroomCode.trim() || !this.userName.trim()) {
+      alert("Enter a valid classroom code and your name!");
+      return;
+    }
+
+    const classroom = this.localStorageService.joinClassroom(this.classroomCode, this.userName);
     if (classroom) {
       alert('Joined Successfully!');
       this.showJoinPrompt = false;
@@ -66,6 +65,7 @@ export class ClassroomListComponent {
       alert('Invalid Code!');
     }
   }
+  
 
   cancelCreate(): void {
     this.showCreatePrompt = false;
@@ -84,5 +84,4 @@ export class ClassroomListComponent {
   goToMcqTest(): void {
     this.router.navigate(['/mcq-test']);
   }
-  
 }
