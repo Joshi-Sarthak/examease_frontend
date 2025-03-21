@@ -1,0 +1,30 @@
+<div class="test-details-container">
+    <h2>Test Details</h2>
+    <form [formGroup]="testForm" (ngSubmit)="saveTest()">
+        <label for="testName">Test Name:</label>
+        <input id="testName" type="text" formControlName="testName" required />
+        <div *ngIf="testForm.controls['testName'].invalid && testForm.controls['testName'].touched" class="error">
+        Test Name is required
+        </div>
+
+        <label for="startFrom">Start Time:</label>
+        <input id="startFrom" type="datetime-local" formControlName="startFrom" required />
+        <div *ngIf="testForm.controls['startFrom'].invalid && testForm.controls['startFrom'].touched" class="error">
+        Start Time is required
+        </div>
+
+        <label for="deadlineTime">Deadline:</label>
+        <input id="deadlineTime" type="datetime-local" formControlName="deadlineTime" required />
+        <div *ngIf="testForm.controls['deadlineTime'].invalid && testForm.controls['deadlineTime'].touched" class="error">
+        Deadline Time is required
+        </div>
+
+        <label for="testTime">Duration (minutes):</label>
+        <input id="testTime" type="number" formControlName="testTime" required />
+        <div *ngIf="testForm.controls['testTime'].invalid && testForm.controls['testTime'].touched" class="error">
+        Duration must be at least 1 minute
+        </div>
+
+        <button type="submit" [disabled]="testForm.invalid">Save</button>
+    </form>
+</div>

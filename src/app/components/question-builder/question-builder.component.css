@@ -1,0 +1,88 @@
+.builder-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  .question-navigation {
+    width: 200px;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+  }
+  
+  .question-navigation ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .question-navigation li {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .question-navigation li.selected {
+    background-color: #e0e0e0;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 20px;
+  }
+  
+  .image-section {
+    margin-bottom: 20px;
+  }
+  
+  .cropped-preview img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .option-editor {
+    margin-top: 20px;
+  }
+  
+  .option-editor div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .option-editor input[type="text"] {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .option-editor button {
+    margin-left: 10px;
+  }
+  

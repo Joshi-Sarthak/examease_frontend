@@ -1,12 +1,51 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, ChangeDetectorRef, Inject, PLATFORM_ID, AfterViewInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterOutlet, RouterLink } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  standalone: true,
+  imports: [
+    CommonModule, 
+    FormsModule,
+    RouterOutlet
+  ],
+  template: `
+      <div class="content">
+        <router-outlet></router-outlet>
+      </div>
+  `,
+  styles: [
+    `
+      .app-container {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .nav-link {
+        cursor: pointer;
+        margin: 10px;
+        padding: 10px;
+        display: inline-block;
+        text-decoration: underline;
+        color: blue;
+      }
+    `
+  ],
 })
-export class AppComponent {
-  title = 'angular-test-app';
+export class AppComponent implements AfterViewInit {
+  constructor(
+    private cdRef: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) {}
+
+  ngAfterViewInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      document.addEventListener("click", (event) => {
+        console.log("Clicked:", event.target);
+        this.cdRef.detectChanges();
+      });
+    }
+  }
 }

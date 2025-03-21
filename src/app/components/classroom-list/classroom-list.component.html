@@ -1,0 +1,42 @@
+<h2>Classrooms</h2>
+    
+<!-- Classroom Grid -->
+<div class="classroom-grid">
+  <div 
+    class="classroom-tile" 
+    *ngFor="let classroom of classrooms" 
+    (click)="openClassroom(classroom.classroomId)">
+    <h3>{{ classroom.classroomName }}</h3>
+    <p>Code: {{ classroom.classroomCode }}</p>
+  </div>
+</div>
+
+<!-- Fixed action buttons at bottom right -->
+<div class="fixed-buttons">
+  <button class="action-btn" (click)="toggleCreatePrompt()">Create Classroom</button>
+  <button class="action-btn" (click)="toggleJoinPrompt()">Join Classroom</button>
+</div>
+
+<!-- Create Classroom Prompt -->
+<div class="prompt-overlay" *ngIf="showCreatePrompt">
+  <div class="prompt-container">
+    <h3>Create Classroom</h3>
+    <input [(ngModel)]="classroomName" placeholder="Enter classroom name">
+    <div class="prompt-buttons">
+      <button (click)="createClassroom()">Submit</button>
+      <button (click)="cancelCreate()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Join Classroom Prompt -->
+<div class="prompt-overlay" *ngIf="showJoinPrompt">
+  <div class="prompt-container">
+    <h3>Join Classroom</h3>
+    <input [(ngModel)]="classroomCode" placeholder="Enter classroom code">
+    <div class="prompt-buttons">
+      <button (click)="joinClassroom()">Submit</button>
+      <button (click)="cancelJoin()">Cancel</button>
+    </div>
+  </div>
+</div>

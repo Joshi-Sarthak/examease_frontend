@@ -1,0 +1,32 @@
+<div class="container">
+  <button class="back-btn" (click)="goBack()">Back to Classrooms</button>
+  <h2>Tests for Classroom</h2>
+
+
+  <div *ngIf="tests.length > 0" class="test-list">
+    <div class="test-item" *ngFor="let test of tests">
+      <h3>{{ test.testName }}</h3>
+      <p>Start: {{ test.startFrom | date:'short' }}</p>
+      <p>Deadline: {{ test.deadlineTime | date:'short' }}</p>
+      <p>Duration: {{ test.testTime }} mins</p>
+
+      <!-- Dropdown for test options -->
+      <div class="dropdown">
+        <button class="dropdown-btn" (click)="toggleDropdown(test.testId, $event)">
+          Options ▼
+        </button>
+        <div 
+          class="dropdown-content" 
+          *ngIf="dropdownOpen[test.testId]">
+          <a (click)="editTest(test.testId)">Edit Test</a>
+          <!-- Additional options like "Delete Test" can go here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="tests.length === 0" class="no-tests">No tests available</div>
+
+  
+  <button class="create-btn fixed-buttons" (click)="navigateToQuestionBuilder()">Create New Test</button>
+</div>

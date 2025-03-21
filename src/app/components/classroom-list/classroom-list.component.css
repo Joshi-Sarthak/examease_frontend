@@ -1,0 +1,88 @@
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .classroom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px;
+  }
+  .classroom-tile {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    background: #f9f9f9;
+  }
+  .classroom-tile:hover {
+    background: #007bff;
+    color: white;
+  }
+  /* Fixed buttons container */
+  .fixed-buttons {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .action-btn {
+    padding: 12px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .action-btn:hover {
+    background-color: #218838;
+  }
+  /* Prompt overlay styles */
+  .prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .prompt-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+  }
+  .prompt-container input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .prompt-buttons {
+    display: flex;
+    justify-content: space-around;
+  }
+  .prompt-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .prompt-buttons button:first-child {
+    background-color: #007bff;
+    color: white;
+  }
+  .prompt-buttons button:last-child {
+    background-color: #6c757d;
+    color: white;
+  }
