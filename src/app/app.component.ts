@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { McqTestComponent } from './mcq-test/mcq-test.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     FormsModule,
     RouterOutlet
-  ],
+],
   template: `
       <div class="content">
         <router-outlet></router-outlet>
@@ -35,6 +36,9 @@ import { isPlatformBrowser } from '@angular/common';
   ],
 })
 export class AppComponent implements AfterViewInit {
+  title(title: any) {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     private cdRef: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: any

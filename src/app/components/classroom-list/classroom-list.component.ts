@@ -80,4 +80,9 @@ export class ClassroomListComponent {
   openClassroom(classroomId: string): void {
     this.router.navigate(['/test-list', classroomId]);
   }
+
+  goToMcqTest(): void {
+    this.router.navigate(['/mcq-test']);
+  }
+  
 }

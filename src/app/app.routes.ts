@@ -3,6 +3,7 @@ import { ClassroomListComponent } from './components/classroom-list/classroom-li
 import { TestListComponent } from './components/test-list/test-list.component';
 import { QuestionBuilderComponent } from './components/question-builder/question-builder.component';
 import { TestDetailsComponent } from './components/test-details/test-details.component';
+import { McqTestComponent } from './mcq-test/mcq-test.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'classroom-list', pathMatch: 'full' }, // Default route
@@ -16,6 +17,8 @@ export const routes: Routes = [
 
   // Test Details => /test-details/:classroomId/:testId
   { path: 'test-details/:classroomId/:testId', component: TestDetailsComponent },
+
+  { path : 'mcq-test', component: McqTestComponent},
 
   { path: '**', redirectTo: 'classroom-list' } // Fallback for unknown routes
 ];
