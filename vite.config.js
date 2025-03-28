@@ -1,23 +1,23 @@
 import { defineConfig } from 'vite';
-import { viteStaticCopy } from 'vite-plugin-static-copy';  // Optional, for handling static files
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
   plugins: [
     viteStaticCopy({
       targets: [
         {
-          src: 'node_modules/tesseract.js/dist/tesseract.min.js',  // Path to the Tesseract JS bundle
-          dest: 'assets/tesseract.js',  // Copy location in your dist folder
+          src: 'node_modules/tesseract.js/dist/tesseract.min.js',
+          dest: 'assets/tesseract.js',
         },
       ],
     }),
   ],
   define: {
-    __dirname: '__dirname', // Polyfill for __dirname to work in the browser
+    __dirname: '__dirname',
   },
   build: {
     rollupOptions: {
-      external: ['tesseract.js'],  // Exclude tesseract.js from SSR
+      external: ['tesseract.js'],
     },
   },
 });

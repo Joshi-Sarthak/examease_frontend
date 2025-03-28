@@ -10,7 +10,6 @@ export class OcrService {
 
   async extractTextFromImage(file: File): Promise<string> {
     try {
-      // Dynamically import Tesseract.js when needed
       const { recognize } = await import('tesseract.js');
 
       const { data } = await recognize(file, 'eng', {

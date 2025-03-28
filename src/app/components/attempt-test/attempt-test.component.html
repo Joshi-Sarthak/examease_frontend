@@ -1,0 +1,42 @@
+<div class="test-container">
+  <div class="header">
+    <h2>{{ testData.testName }}</h2>
+    <div class="timer">⏳ {{ formatTime(remainingTimeInSeconds) }}</div>
+  </div>
+
+  <!-- Scrollable Question Navigation Bar -->
+  <div class="question-nav-container">
+    <div class="question-nav" #questionNav>
+      <button *ngFor="let q of testData.questions; let i = index"
+        [ngClass]="getQuestionStatus(i)"
+        (click)="navigateToQuestion(i)"
+        #questionButtons>
+        {{ i + 1 }}
+      </button>
+    </div>
+  </div>
+
+  <div class="question-box">
+    <h3>Question {{ currentQuestionIndex + 1 }}/{{ testData.questions.length }}</h3>
+    <p>{{ testData.questions[currentQuestionIndex].questionText }}</p>
+
+    <div class="options">
+      <button *ngFor="let option of testData.questions[currentQuestionIndex].options; let i = index"
+        [class.selected]="selectedOptions[currentQuestionIndex] === i"
+        (click)="selectOption(i)">
+        {{ i | charCode }}. {{ option }}
+      </button>
+    </div>
+  </div>
+
+  <div class="navigation">
+    <button (click)="navigateToQuestion(currentQuestionIndex - 1)" [disabled]="currentQuestionIndex === 0">
+      Previous
+    </button>
+    <button (click)="navigateToQuestion(currentQuestionIndex + 1)" [disabled]="currentQuestionIndex === testData.questions.length - 1">
+      Next
+    </button>
+  </div>
+
+  <button class="submit-btn" (click)="submitTest()">Submit Test</button>
+</div>

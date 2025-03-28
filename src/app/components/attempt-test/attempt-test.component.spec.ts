@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ResultPageComponent } from './result-page.component';
+import { AttemptTestComponent } from './attempt-test.component';
 
-describe('ResultPageComponent', () => {
-  let component: ResultPageComponent;
-  let fixture: ComponentFixture<ResultPageComponent>;
+describe('AttemptTestComponent', () => {
+  let component: AttemptTestComponent;
+  let fixture: ComponentFixture<AttemptTestComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ResultPageComponent]
+      imports: [AttemptTestComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ResultPageComponent);
+    fixture = TestBed.createComponent(AttemptTestComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

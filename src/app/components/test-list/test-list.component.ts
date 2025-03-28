@@ -1,36 +1,51 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocalStorageService } from '../../../services/local-storage.service';
-import { TestData } from '../../../models/test.model';
 import { CommonModule } from '@angular/common';
+import { ClassroomService } from '../../../services/classroom.service';
+import { TestService } from '../../../services/test.service';
+import { AuthService } from '../../../services/auth.service';
+import { TestData } from '../../../models/test.model';
+import { log } from 'console';
 
 @Component({
   selector: 'app-test-list',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './test-list.component.html',
-  styleUrls: ['./test-list.component.css']
+  styleUrls: ['./test-list.component.css'],
 })
 export class TestListComponent {
-startTest(arg0: string) {
-throw new Error('Method not implemented.');
-}
-deleteTest(arg0: string) {
-throw new Error('Method not implemented.');
-}
   classroomId: string = '';
   tests: TestData[] = [];
-  dropdownOpen: { [testId: string]: boolean } = {};
-  userRole: 'teacher' | 'student' | null = null; // Store user role
+  userRole: 'teacher' | 'student' | null = null;
+
+  // Added properties
+  dropdownOpen: { [key: string]: boolean } = {};
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private localStorageService: LocalStorageService
-  ) {
+    private classroomService: ClassroomService,
+    private testService: TestService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
     this.classroomId = this.route.snapshot.paramMap.get('classroomId') || '';
-    this.tests = this.localStorageService.getTestsForClassroom(this.classroomId);
-    this.userRole = this.localStorageService.getUserRole(this.classroomId); // Get user role
+    this.authService.getUser().subscribe((user) => {
+      if (!user) {
+        this.router.navigate(['/login']);
+      } else {
+        this.loadData(user.userId);
+      }
+    });
+  }
+
+  private loadData(userId: string): void {
+    this.tests = this.testService.getTests(this.classroomId);
+
+    const classroom = this.classroomService.getClassroomById(this.classroomId); // Fixed method call
+    this.userRole = classroom?.teacherId === userId ? 'teacher' : 'student';
   }
 
   goBack(): void {
@@ -43,14 +58,24 @@ throw new Error('Method not implemented.');
     }
   }
 
-  toggleDropdown(testId: string, event: Event): void {
-    event.stopPropagation();
-    this.dropdownOpen[testId] = !this.dropdownOpen[testId];
+  startTest(testId: string): void {
+    this.router.navigate(['/attempt-test', this.classroomId, testId]);
+  }
+
+  deleteTest(testId: string): void {
+    if (this.userRole === 'teacher') {
+      this.testService.deleteTest(this.classroomId, testId);
+      this.tests = this.testService.getTests(this.classroomId);
+    }
   }
 
   editTest(testId: string): void {
-    if (this.userRole === 'teacher') {
-      this.router.navigate(['/question-builder', this.classroomId, testId]);
-    }
+    console.log('Edit test clicked', this.classroomId, testId);
+    this.router.navigate(['/question-builder', this.classroomId, testId]);
+  }
+
+  toggleDropdown(testId: string, event: Event): void {
+    event.stopPropagation();
+    this.dropdownOpen[testId] = !this.dropdownOpen[testId];
   }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocalStorageService } from '../../../services/local-storage.service';
 import { OcrService } from '../../../services/ocr.service';
+import { TestService } from '../../../services/test.service';
 import { OptionData } from '../../../models/option.model';
 import { QuestionData } from '../../../models/question.model';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
@@ -11,13 +11,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-question-builder',
   standalone: true,
-  imports: [
-    CommonModule,
-    ImageCropperComponent,
-    NgIf,
-    NgFor,
-    FormsModule
-  ],
+  imports: [CommonModule, ImageCropperComponent, NgIf, NgFor, FormsModule],
   templateUrl: './question-builder.component.html',
   styleUrls: ['./question-builder.component.css']
 })
@@ -35,7 +29,7 @@ export class QuestionBuilderComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private localStorageService: LocalStorageService,
+    private testService: TestService,
     private ocrService: OcrService
   ) {}
 
@@ -46,16 +40,16 @@ export class QuestionBuilderComponent implements OnInit {
     if (testIdParam) {
       this.testId = testIdParam;
       this.isEditTest = true;
-      const existingTest = this.localStorageService.getTest(this.testId, this.classroomId);
-      if (existingTest && existingTest.questions && existingTest.questions.length > 0) {
+      const existingTest = this.testService.getTest(this.testId, this.classroomId);
+      if (existingTest?.questions?.length) {
         this.questions = existingTest.questions;
-      }
-      if (this.questions.length === 0) {
-        this.addNewQuestion();
       }
     } else {
       this.testId = new Date().getTime().toString();
       this.isEditTest = false;
+    }
+
+    if (this.questions.length === 0) {
       this.addNewQuestion();
     }
   }
@@ -81,9 +75,37 @@ export class QuestionBuilderComponent implements OnInit {
     this.currentQuestionIndex = this.questions.length - 1;
   }
 
+  addOption(): void {
+    const newOption: OptionData = {
+      optionId: new Date().getTime().toString(),
+      optionText: '',
+      optionNumber: this.currentQuestion.options.length + 1,
+      questionId: this.currentQuestion.questionId
+    };
+    this.currentQuestion.options.push(newOption);
+  }
+
+  removeOption(index: number): void {
+    this.currentQuestion.options.splice(index, 1);
+  }
+
+  setCorrectOption(index: number): void {
+    this.currentQuestion.correctOptionIndex = index;
+  }
+
+  goBack(): void {
+    this.router.navigate(['/test-list', this.classroomId]);
+  }
+
+  saveTest(): void {
+    this.router.navigate(['/test-details', this.classroomId, this.testId], {
+      state: { questions: this.questions }
+    });
+  }
+
   onFileSelected(event: Event): void {
     const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length) {
+    if (target.files?.length) {
       this.selectedFile = target.files[0];
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
@@ -161,34 +183,6 @@ export class QuestionBuilderComponent implements OnInit {
     } else if (field === 'option' && optionIndex !== -1) {
       this.currentQuestion.options[optionIndex].optionText = text;
     }
-  }
-
-  addOption(): void {
-    const newOption: OptionData = {
-      optionId: new Date().getTime().toString(),
-      optionText: '',
-      optionNumber: this.currentQuestion.options.length + 1,
-      questionId: this.currentQuestion.questionId
-    };
-    this.currentQuestion.options.push(newOption);
-  }
-
-  removeOption(index: number): void {
-    this.currentQuestion.options.splice(index, 1);
-  }
-
-  setCorrectOption(index: number): void {
-    this.currentQuestion.correctOptionIndex = index;
-  }
-
-  goBack(): void {
-    this.router.navigate(['/test-list', this.classroomId]);
-  }
-
-  saveTest(): void {
-    this.router.navigate(['/test-details', this.classroomId, this.testId], {
-      state: { questions: this.questions }
-    });
   }
 
   removeImage(): void {

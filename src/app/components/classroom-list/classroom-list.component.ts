@@ -1,71 +1,56 @@
 import { Component } from '@angular/core';
-import { LocalStorageService } from '../../../services/local-storage.service';
-import { ClassroomData } from '../../../models/classroom.model';
+import { ClassroomService } from '../../../services/classroom.service';
+import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { ClassroomData } from '../../../models/classroom.model';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-classroom-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './classroom-list.component.html',
-  styleUrls: ['./classroom-list.component.css']
+  styleUrls: ['./classroom-list.component.css'],
+  imports: [CommonModule, FormsModule],
 })
 export class ClassroomListComponent {
   classrooms: ClassroomData[] = [];
   classroomName: string = '';
   classroomCode: string = '';
-  userName: string = ''; // Add username input
+  user: any = null;
 
   showCreatePrompt: boolean = false;
   showJoinPrompt: boolean = false;
 
   constructor(
-    private localStorageService: LocalStorageService,
+    private classroomService: ClassroomService,
+    private authService: AuthService,
     private router: Router
-  ) {
-    this.classrooms = this.localStorageService.getClassrooms('', this.userName);
+  ) {}
+
+  ngOnInit(): void {
+    this.authService.getUser().subscribe((user) => {
+      this.user = user;
+      if (!this.user) {
+        this.router.navigate(['/login']);
+      } else {
+        this.loadUserClassrooms();
+      }
+    });
+  }
+
+  /** Load classrooms related to the logged-in user */
+  loadUserClassrooms(): void {
+    this.classrooms = this.classroomService.getUserClassrooms(this.user.userId);
   }
 
   toggleCreatePrompt(): void {
-    this.showCreatePrompt = true;
+    this.showCreatePrompt = !this.showCreatePrompt;
   }
 
   toggleJoinPrompt(): void {
-    this.showJoinPrompt = true;
+    this.showJoinPrompt = !this.showJoinPrompt;
   }
-
-  createClassroom(): void {
-    if (!this.classroomName.trim() || !this.userName.trim()) {
-      alert("Enter a valid classroom name and your name!");
-      return;
-    }
-  
-    const classroomId = Date.now().toString();
-    this.localStorageService.createClassroom(classroomId, this.classroomName, this.userName);
-    this.classrooms = this.localStorageService.getClassrooms('', this.userName); // Refresh list
-    this.classroomName = '';
-    this.showCreatePrompt = false;
-  }
-  
-  joinClassroom(): void {
-    if (!this.classroomCode.trim() || !this.userName.trim()) {
-      alert("Enter a valid classroom code and your name!");
-      return;
-    }
-
-    const classroom = this.localStorageService.joinClassroom(this.classroomCode, this.userName);
-    if (classroom) {
-      alert('Joined Successfully!');
-      this.showJoinPrompt = false;
-      this.classroomCode = '';
-      this.router.navigate(['/test-list', classroom.classroomId]);
-    } else {
-      alert('Invalid Code!');
-    }
-  }
-  
 
   cancelCreate(): void {
     this.showCreatePrompt = false;
@@ -77,11 +62,39 @@ export class ClassroomListComponent {
     this.classroomCode = '';
   }
 
-  openClassroom(classroomId: string): void {
-    this.router.navigate(['/test-list', classroomId]);
+  createClassroom(): void {
+    if (!this.classroomName.trim()) {
+      alert('Enter a valid classroom name!');
+      return;
+    }
+
+    const classroomId = Date.now().toString();
+    this.classroomService.createClassroom(classroomId, this.classroomName, this.user.userId);
+    this.loadUserClassrooms();
+
+    this.classroomName = '';
+    this.showCreatePrompt = false;
   }
 
-  goToMcqTest(): void {
-    this.router.navigate(['/mcq-test']);
+  joinClassroom(): void {
+    if (!this.classroomCode.trim()) {
+      alert('Enter a valid classroom code!');
+      return;
+    }
+
+    const classroom = this.classroomService.joinClassroom(this.classroomCode, this.user.userId);
+    if (classroom) {
+      alert('Joined Successfully!');
+      this.loadUserClassrooms();
+      this.showJoinPrompt = false;
+      this.classroomCode = '';
+      this.router.navigate(['/test-list', classroom.classroomId]);
+    } else {
+      alert('Invalid Code!');
+    }
+  }
+
+  openClassroom(classroomId: string): void {
+    this.router.navigate(['/test-list', classroomId]);
   }
 }

@@ -1,0 +1,87 @@
+.test-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timer {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.question-nav {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.question-nav button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.question-nav .current {
+  background-color: blue;
+  color: white;
+}
+
+.question-nav .answered {
+  background-color: green;
+  color: white;
+}
+
+.question-nav .unanswered {
+  background-color: lightgray;
+  color: black;
+}
+
+.question-box {
+  text-align: left;
+  margin-top: 20px;
+}
+
+.options button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.options button.selected {
+  background: lightblue;
+  border: 2px solid blue;
+}
+
+.navigation {
+  margin-top: 20px;
+}
+
+.navigation button {
+  margin: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.submit-btn {
+  margin-top: 20px;
+  background-color: red;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+}
