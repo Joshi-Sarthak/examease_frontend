@@ -1,7 +1,7 @@
 export interface OptionData {
     optionId: string;
     optionText: string;
-    image?: string;
+    image: string | null;
     optionNumber: number;
     questionId: string;
 }

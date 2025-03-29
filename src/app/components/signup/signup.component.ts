@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 @Component({ 
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule],  // ✅ Required for ngModel
+  imports: [CommonModule, FormsModule], 
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
 })

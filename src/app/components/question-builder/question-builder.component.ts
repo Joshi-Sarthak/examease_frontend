@@ -11,7 +11,13 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-question-builder',
   standalone: true,
-  imports: [CommonModule, ImageCropperComponent, NgIf, NgFor, FormsModule],
+  imports: [
+    CommonModule, 
+    NgIf, 
+    NgFor, 
+    FormsModule,
+    ImageCropperComponent
+  ],
   templateUrl: './question-builder.component.html',
   styleUrls: ['./question-builder.component.css']
 })
@@ -25,6 +31,9 @@ export class QuestionBuilderComponent implements OnInit {
   selectedFile: File | null = null;
   imageChangedEvent: string | null = null;
   croppedArea: { x1: number; y1: number; width: number; height: number } | null = null;
+
+  croppingField: 'question' | 'option' | null = null;
+  croppingOptionIndex: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -80,7 +89,8 @@ export class QuestionBuilderComponent implements OnInit {
       optionId: new Date().getTime().toString(),
       optionText: '',
       optionNumber: this.currentQuestion.options.length + 1,
-      questionId: this.currentQuestion.questionId
+      questionId: this.currentQuestion.questionId,
+      image: null
     };
     this.currentQuestion.options.push(newOption);
   }
@@ -101,6 +111,76 @@ export class QuestionBuilderComponent implements OnInit {
     this.router.navigate(['/test-details', this.classroomId, this.testId], {
       state: { questions: this.questions }
     });
+  }
+
+  openFilePicker(): void {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }  
+
+  async extractTextFromSelectedArea(field: 'question' | 'option', optionIndex: number = -1): Promise<void> {
+    if (!this.selectedFile || !this.croppedArea) {
+      this.updateTextField(field, optionIndex, 'No image or selected area found.');
+      return;
+    }
+    try {
+      const croppedImageFile = await this.createCroppedImage();
+      const text = await this.ocrService.extractTextFromImage(croppedImageFile);
+      this.updateTextField(field, optionIndex, text.trim() || 'No text extracted from the selected area.');
+    } catch (error: unknown) {
+      this.updateTextField(field, optionIndex, 'OCR error: Unable to extract text.');
+      console.error('OCR error:', error);
+    }
+  }
+
+  private updateTextField(field: 'question' | 'option', optionIndex: number, text: string): void {
+    if (field === 'question') {
+      this.currentQuestion.questionText = text;
+    } else if (field === 'option' && optionIndex !== -1) {
+      this.currentQuestion.options[optionIndex].optionText = text;
+    }
+  }
+
+  onSelectCropImage(field: 'question' | 'option', optionIndex: number = -1): void {
+    if (field === 'question') {
+      if (this.currentQuestion.questionImage) {
+        this.currentQuestion.questionImage = null; 
+      } else if (this.imageChangedEvent) {
+        this.croppingField = 'question';
+        this.croppingOptionIndex = null;
+        this.finalizeCroppedImage();
+      } else {
+        document.getElementById('fileInput')?.click();
+      }
+    } else {
+      if (this.currentQuestion.options[optionIndex].image) {
+        this.currentQuestion.options[optionIndex].image = null;
+      } else if (this.imageChangedEvent) {
+        this.croppingField = 'option';
+        this.croppingOptionIndex = optionIndex;
+        this.finalizeCroppedImage();
+      } else {
+        document.getElementById('fileInput')?.click();
+      }
+    }
+  }  
+
+  toggleCropImage(target: string, index: number = -1) {
+    if (target === 'question') {
+      if (this.currentQuestion.questionImage) {
+        this.currentQuestion.questionImage = null;
+      } else {
+        this.onSelectCropImage('question');
+      }
+    } else {
+      if (this.currentQuestion.options[index].image) {
+        this.currentQuestion.options[index].image = null;
+      } else {
+        this.onSelectCropImage('option', index);
+      }
+    }
   }
 
   onFileSelected(event: Event): void {
@@ -126,18 +206,24 @@ export class QuestionBuilderComponent implements OnInit {
     }
   }
 
-  async extractTextFromSelectedArea(field: 'question' | 'option', optionIndex: number = -1): Promise<void> {
-    if (!this.selectedFile || !this.croppedArea) {
-      this.updateTextField(field, optionIndex, 'No image or selected area found.');
-      return;
-    }
+  async finalizeCroppedImage(): Promise<void> {
+    if (!this.selectedFile || !this.croppedArea) return;
+
     try {
       const croppedImageFile = await this.createCroppedImage();
-      const text = await this.ocrService.extractTextFromImage(croppedImageFile);
-      this.updateTextField(field, optionIndex, text.trim() || 'No text extracted from the selected area.');
-    } catch (error: unknown) {
-      this.updateTextField(field, optionIndex, 'OCR error: Unable to extract text.');
-      console.error('OCR error:', error);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Img = reader.result as string;
+        if (this.croppingField === 'question') {
+          this.currentQuestion.questionImage = base64Img;
+        } else if (this.croppingField === 'option' && this.croppingOptionIndex !== null) {
+          this.currentQuestion.options[this.croppingOptionIndex].image = base64Img;
+        }
+      };
+      reader.readAsDataURL(croppedImageFile);
+    } catch (error) {
+      console.error('Error finalizing cropped image:', error);
     }
   }
 
@@ -146,6 +232,7 @@ export class QuestionBuilderComponent implements OnInit {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
       const image = new Image();
+
       image.onload = () => {
         if (!context || !this.croppedArea) {
           reject('Canvas context or cropped area not found.');
@@ -175,14 +262,6 @@ export class QuestionBuilderComponent implements OnInit {
       image.onerror = () => reject('Failed to load image.');
       image.src = URL.createObjectURL(this.selectedFile!);
     });
-  }
-
-  private updateTextField(field: 'question' | 'option', optionIndex: number, text: string): void {
-    if (field === 'question') {
-      this.currentQuestion.questionText = text;
-    } else if (field === 'option' && optionIndex !== -1) {
-      this.currentQuestion.options[optionIndex].optionText = text;
-    }
   }
 
   removeImage(): void {
