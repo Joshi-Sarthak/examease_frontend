@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { ResultService } from '../../../services/result.service';
 
 @Component({
   selector: 'app-teacher-result',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './teacher-result.component.html',
-  styleUrls: ['./teacher-result.component.css']
+  styleUrls: ['./teacher-result.component.css'],
 })
 export class TeacherResultComponent implements OnInit {
   testId!: string;
   results: any[] = [];
   isLoading: boolean = true;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router, private resultService: ResultService ) {}
 
   ngOnInit() {
     this.testId = this.route.snapshot.paramMap.get('testId')!;
@@ -22,16 +23,7 @@ export class TeacherResultComponent implements OnInit {
   }
 
   fetchTestResults() {
-    this.http.get(`https://your-api.com/results/${this.testId}`).subscribe(
-      (data: any) => {
-        this.results = data;
-        this.isLoading = false;
-      },
-      (error) => {
-        console.error('Error fetching results', error);
-        this.isLoading = false;
-      }
-    );
+    this.results = this.resultService.getResults(this.testId);
   }
 
   viewStudentResult(studentId: string) {
@@ -49,7 +41,7 @@ export class TeacherResultComponent implements OnInit {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'test_results.csv';
+    a.download = `test_results_${this.testId}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   }

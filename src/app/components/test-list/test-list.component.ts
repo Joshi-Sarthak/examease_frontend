@@ -5,7 +5,6 @@ import { ClassroomService } from '../../../services/classroom.service';
 import { TestService } from '../../../services/test.service';
 import { AuthService } from '../../../services/auth.service';
 import { TestData } from '../../../models/test.model';
-import { log } from 'console';
 
 @Component({
   selector: 'app-test-list',
@@ -18,8 +17,6 @@ export class TestListComponent {
   classroomId: string = '';
   tests: TestData[] = [];
   userRole: 'teacher' | 'student' | null = null;
-
-  // Added properties
   dropdownOpen: { [key: string]: boolean } = {};
 
   constructor(
@@ -43,8 +40,7 @@ export class TestListComponent {
 
   private loadData(userId: string): void {
     this.tests = this.testService.getTests(this.classroomId);
-
-    const classroom = this.classroomService.getClassroomById(this.classroomId); // Fixed method call
+    const classroom = this.classroomService.getClassroomById(this.classroomId);
     this.userRole = classroom?.teacherId === userId ? 'teacher' : 'student';
   }
 
@@ -72,6 +68,12 @@ export class TestListComponent {
   editTest(testId: string): void {
     console.log('Edit test clicked', this.classroomId, testId);
     this.router.navigate(['/question-builder', this.classroomId, testId]);
+  }
+
+  viewResults(testId: string): void {
+    if (this.userRole === 'teacher') {
+      this.router.navigate(['/teacher-result', testId]);
+    }
   }
 
   toggleDropdown(testId: string, event: Event): void {

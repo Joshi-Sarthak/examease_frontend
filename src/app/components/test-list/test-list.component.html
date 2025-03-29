@@ -20,6 +20,8 @@
         <div class="dropdown-content" *ngIf="dropdownOpen[test.testId]">
           <a (click)="editTest(test.testId)">Edit Test</a>
           <a (click)="deleteTest(test.testId)">Delete Test</a>
+          <a (click)="viewResults(test.testId)">View Results</a>
+          <!-- New button -->
         </div>
       </div>
 

@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { TestData } from '../../../models/test.model';
 import { TestService } from '../../../services/test.service';
 import { CharCodePipe } from '../pipes/char-code.pipe';
+import { ResultService } from '../../../services/result.service';
+import { TestResult } from '../../../models/test-result.model';
 
 @Component({
   selector: 'app-attempt-test',
@@ -75,22 +77,31 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
     return 'unanswered';
   }
 
+  private resultService = inject(ResultService);
+
   submitTest(timeUp = false) {
     if (!timeUp && !confirm('Are you sure you want to submit the test?')) return;
 
     let correctAnswers = 0;
     this.testData.questions.forEach((question, i) => {
-      console.log(this.selectedOptions[i], question.correctOptionIndex);
       if (question.correctOptionIndex === this.selectedOptions[i]) {
         correctAnswers++;
       }
     });
 
-    const result = Math.round((correctAnswers / this.testData.questions.length) * 100);
-    this.testData.result = result;
+    const result: TestResult = {
+      studentId: localStorage.getItem('currentUserId') || 'unknown_student',
+      studentName: localStorage.getItem('currentUserName') || 'Unknown',
+      score: correctAnswers,
+      total: this.testData.questions.length,
+      percentage: Math.round((correctAnswers / this.testData.questions.length) * 100),
+      testId: this.testId,
+      classroomId: this.classroomId,
+    };
 
-    this.testService.saveTest(this.testData);
-    alert(`Test Submitted! Your score is ${result}%`);
+    this.resultService.saveResult(result);
+
+    alert(`Test Submitted! Your score is ${result.percentage}%`);
     this.router.navigate(['/test-list', this.classroomId]);
   }
 
