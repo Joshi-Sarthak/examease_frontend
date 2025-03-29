@@ -38,7 +38,7 @@ export class TeacherResultComponent implements OnInit {
   exportCSV() {
     let csvContent = "Student Name,Score,Total,Percentage\n";
     this.results.forEach((result) => {
-      const percentage = ((result.score / result.total) * 100).toFixed(2);
+      const percentage = ((result.score / result.total)).toFixed(2);
       csvContent += `${result.studentName},${result.score},${result.total},${percentage}%\n`;
     });
 

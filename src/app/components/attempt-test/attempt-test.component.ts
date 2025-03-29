@@ -109,7 +109,7 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
       studentName: this.user.username || 'Unknown Student',
       score: correctAnswers,
       total: this.testData.questions.length,
-      percentage: Math.round((correctAnswers / this.testData.questions.length)),
+      percentage: Math.round((correctAnswers / this.testData.questions.length) * 100),
       testId: this.testId,
     };
 
