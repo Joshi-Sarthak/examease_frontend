@@ -80,6 +80,7 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
 
     let correctAnswers = 0;
     this.testData.questions.forEach((question, i) => {
+      console.log(this.selectedOptions[i], question.correctOptionIndex);
       if (question.correctOptionIndex === this.selectedOptions[i]) {
         correctAnswers++;
       }
