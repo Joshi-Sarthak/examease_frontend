@@ -6,6 +6,7 @@ import { TestService } from '../../../services/test.service';
 import { CharCodePipe } from '../pipes/char-code.pipe';
 import { ResultService } from '../../../services/result.service';
 import { TestResult } from '../../../models/test-result.model';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-attempt-test',
@@ -18,6 +19,7 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private testService = inject(TestService);
+  user: any = null;
 
   classroomId: string = '';
   testId: string = '';
@@ -27,7 +29,18 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
   remainingTimeInSeconds = 0;
   timer: any;
 
+  constructor(
+    private authService: AuthService,
+  ) {}
+
   ngOnInit(): void {
+    this.authService.getUser().subscribe((user) => {
+      this.user = user;
+      if (!this.user) {
+        this.router.navigate(['/login']);
+      } 
+    });
+
     this.classroomId = this.route.snapshot.paramMap.get('classroomId') || '';
     this.testId = this.route.snapshot.paramMap.get('testId') || '';
 
@@ -84,19 +97,20 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
 
     let correctAnswers = 0;
     this.testData.questions.forEach((question, i) => {
+      console.log('Selected Option:', this.selectedOptions[i]);
+      console.log('Correct Option:', question.correctOptionIndex);
       if (question.correctOptionIndex === this.selectedOptions[i]) {
         correctAnswers++;
       }
     });
 
     const result: TestResult = {
-      studentId: localStorage.getItem('currentUserId') || 'unknown_student',
-      studentName: localStorage.getItem('currentUserName') || 'Unknown',
+      studentId: this.user.userId || '',
+      studentName: this.user.username || 'Unknown Student',
       score: correctAnswers,
       total: this.testData.questions.length,
-      percentage: Math.round((correctAnswers / this.testData.questions.length) * 100),
+      percentage: Math.round((correctAnswers / this.testData.questions.length)),
       testId: this.testId,
-      classroomId: this.classroomId,
     };
 
     this.resultService.saveResult(result);

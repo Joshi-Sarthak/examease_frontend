@@ -9,14 +9,12 @@ export class ResultService {
 
   constructor() {}
 
-  // Save test result
   saveResult(testResult: TestResult) {
     const results = this.getResults(testResult.testId);
     results.push(testResult);
     localStorage.setItem(this.storageKey + testResult.testId, JSON.stringify(results));
   }
 
-  // Retrieve results for a specific test
   getResults(testId: string): TestResult[] {
     const storedResults = localStorage.getItem(this.storageKey + testId);
     return storedResults ? JSON.parse(storedResults) : [];

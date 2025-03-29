@@ -5,6 +5,5 @@ export interface TestResult {
     total: number;
     percentage: number;
     testId: string;
-    classroomId: string;
   }
   

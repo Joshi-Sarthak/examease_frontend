@@ -15,11 +15,16 @@ export class TeacherResultComponent implements OnInit {
   results: any[] = [];
   isLoading: boolean = true;
 
-  constructor(private route: ActivatedRoute, private router: Router, private resultService: ResultService ) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private router: Router, 
+    private resultService: ResultService,
+  ) {}
 
   ngOnInit() {
     this.testId = this.route.snapshot.paramMap.get('testId')!;
     this.fetchTestResults();
+    this.isLoading = false;
   }
 
   fetchTestResults() {
