@@ -4,6 +4,7 @@ import { OcrService } from '../../../services/ocr.service';
 import { TestService } from '../../../services/test.service';
 import { OptionData } from '../../../models/option.model';
 import { QuestionData } from '../../../models/question.model';
+import { CharCodePipe } from '../pipes/char-code.pipe';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +17,8 @@ import { FormsModule } from '@angular/forms';
     NgIf, 
     NgFor, 
     FormsModule,
-    ImageCropperComponent
+    ImageCropperComponent,
+    CharCodePipe
   ],
   templateUrl: './question-builder.component.html',
   styleUrls: ['./question-builder.component.css']

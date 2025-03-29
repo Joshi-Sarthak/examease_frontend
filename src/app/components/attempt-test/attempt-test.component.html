@@ -4,7 +4,6 @@
     <div class="timer">⏳ {{ formatTime(remainingTimeInSeconds) }}</div>
   </div>
 
-  <!-- Scrollable Question Navigation Bar -->
   <div class="question-nav-container">
     <div class="question-nav" #questionNav>
       <button *ngFor="let q of testData.questions; let i = index"
@@ -19,7 +18,6 @@
   <div class="question-box">
     <h3>Question {{ currentQuestionIndex + 1 }}/{{ testData.questions.length }}</h3>
     
-    <!-- Display Question Image if available -->
     <div class="question-image" *ngIf="testData.questions[currentQuestionIndex].questionImage">
       <img [src]="testData.questions[currentQuestionIndex].questionImage" alt="Question Image">
     </div>
@@ -32,7 +30,6 @@
         (click)="selectOption(i)">
         {{ i | charCode }}. {{ option.optionText }}
         
-        <!-- Display Option Image if available -->
         <div class="option-image" *ngIf="option.image">
           <img [src]="option.image" alt="Option Image">
         </div>

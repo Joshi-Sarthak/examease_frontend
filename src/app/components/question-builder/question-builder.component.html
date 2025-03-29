@@ -81,7 +81,7 @@
             <label for="correctOption">Select Correct Option:</label>
             <select id="correctOption" [(ngModel)]="this.currentQuestion.correctOptionIndex">
               <option *ngFor="let option of currentQuestion.options; let i = index" [value]="i">
-                {{ i + 1 }}
+                {{ i | charCode }}
               </option>
             </select>
           </div>
