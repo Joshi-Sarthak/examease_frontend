@@ -1,47 +1,36 @@
-<h2 class="text-2xl font-bold mb-4">Your Classrooms</h2>
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-  <div
-    class="bg-white shadow-lg rounded-lg p-4 relative cursor-pointer"
-    *ngFor="let classroom of classrooms"
-    (click)="openClassroom(classroom.classroomId)"
-  >
-    <div class="flex justify-between items-center">
-      <h3 class="text-lg font-semibold">{{ classroom.classroomName }}</h3>
+<h2>Classrooms</h2>
 
-      <div class="relative">
-        <button
-          class="text-gray-600 hover:text-gray-800"
-          (click)="$event.stopPropagation(); toggleDropdown(classroom.classroomId)"
-        >
-          ⋮
-        </button>
+  <!-- Classroom Cards Grid -->
+  <h2 class="section-header">Your Classrooms</h2>
+  <div class="cards-grid">
+    <div
+      class="card"
+      *ngFor="let classroom of classrooms"
+      (click)="openClassroom(classroom.classroomId)"
+    >
+      <h3 class="card-title">{{ classroom.classroomName }}</h3>
+      <p class="card-code">Code: {{ classroom.classroomCode }}</p>
+    </div>
+  </div>
 
-        <div
-          *ngIf="dropdownOpen === classroom.classroomId"
-          class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-md rounded-md overflow-hidden"
-        >
-          <button
-            *ngIf="classroom.teacherId === user.userId"
-            class="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-            (click)="copyClassroomCode(classroom.classroomCode); closeDropdown()"
-          >
-            📋 Copy Code
-          </button>
-          <button
-            *ngIf="classroom.teacherId === user.userId"
-            class="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
-            (click)="confirmDeleteClassroom(classroom.classroomId); closeDropdown()"
-          >
-            🗑️ Delete Classroom
-          </button>
-          <button
-            *ngIf="classroom.teacherId !== user.userId"
-            class="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-            (click)="leaveClassroom(classroom.classroomId); closeDropdown()"
-          >
-            🚪 Leave Classroom
-          </button>
-        </div>
+  <!-- Fixed Action Buttons -->
+  <div class="fixed-buttons">
+    <button class="action-btn" (click)="toggleCreatePrompt()">
+      Create Classroom
+    </button>
+    <button class="action-btn" (click)="toggleJoinPrompt()">
+      Join Classroom
+    </button>
+  </div>
+
+  <!-- Create Classroom Prompt -->
+  <div class="prompt-overlay" *ngIf="showCreatePrompt">
+    <div class="prompt-container">
+      <h3>Create Classroom</h3>
+      <input [(ngModel)]="classroomName" placeholder="Enter classroom name" />
+      <div class="prompt-buttons">
+        <button (click)="createClassroom()">Submit</button>
+        <button (click)="cancelCreate()">Cancel</button>
       </div>
     </div>
 

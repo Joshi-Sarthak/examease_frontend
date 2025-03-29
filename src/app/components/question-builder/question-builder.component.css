@@ -1,88 +1,259 @@
+/* General container styling */
 .builder-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-  }
-  
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #007bff;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: color 0.3s ease;
+}
+
+.icon-button:hover {
+  color: #0056b3;
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  margin: 0;
+  color: #333;
+}
+
+/* Main content layout */
+.main-content {
+  display: flex;
+  gap: 20px;
+}
+
+/* Question navigation panel */
+.question-navigation {
+  width: 250px;
+  border-right: 1px solid #ddd;
+  padding-right: 15px;
+}
+
+.question-navigation ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.question-navigation li {
+  padding: 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.question-navigation li:hover {
+  background-color: #f8f9fa;
+}
+
+.question-navigation li.selected {
+  background-color: #e9ecef;
+  border-color: #007bff;
+  font-weight: bold;
+}
+
+.question-navigation button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.question-navigation button:hover {
+  background-color: #0056b3;
+}
+
+/* Content area styling */
+.content {
+  flex-grow: 1;
+}
+
+/* Cropper and select image containers */
+.cropper-container,
+.select-image-container {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.cropper-container image-cropper {
+  max-width: 100%;
+}
+
+.select-image-container button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.select-image-container button:hover {
+  background-color: #0056b3;
+}
+
+/* Field container for text areas and inputs */
+.field-container {
+  margin-bottom: 15px;
+}
+
+.field-container textarea,
+.field-container input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* Controls (buttons) styling */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.controls button {
+  background-color: #17a2b8;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.controls button:hover {
+  background-color: #138496;
+}
+
+/* Image preview */
+.image-preview {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Options section */
+.options-section {
+  margin-top: 20px;
+}
+
+.options-section h3 {
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+/* Option item styling */
+.option-item {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f8f9fa;
+}
+
+.option-item .field-container {
+  margin-bottom: 10px;
+}
+
+.option-item input {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Option item controls */
+.option-item .controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.option-item .controls button {
+  background-color: #17a2b8;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 0.9rem;
+}
+
+.option-item .controls button:hover {
+  background-color: #138496;
+}
+
+/* Correct option selector */
+.correct-option-selector {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.correct-option-selector label {
+  font-size: 1rem;
+  color: #333;
+}
+
+.correct-option-selector select {
+  padding: 6px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .main-content {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
+    flex-direction: column;
   }
-  
   .question-navigation {
-    width: 200px;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-  }
-  
-  .question-navigation ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .question-navigation li {
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  .question-navigation li.selected {
-    background-color: #e0e0e0;
-  }
-  
-  .content {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
-  
-  textarea {
     width: 100%;
-    height: 100px;
-    margin-bottom: 20px;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
   }
-  
-  .image-section {
-    margin-bottom: 20px;
-  }
-  
-  .cropped-preview img {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .option-editor {
-    margin-top: 20px;
-  }
-  
-  .option-editor div {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .option-editor input[type="text"] {
-    flex: 1;
-    margin-right: 10px;
-  }
-  
-  .option-editor button {
-    margin-left: 10px;
-  }
-  
+}
