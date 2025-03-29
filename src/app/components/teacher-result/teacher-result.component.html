@@ -1,0 +1,36 @@
+<div class="result-container">
+  <h2>Test Results</h2>
+
+  <div *ngIf="isLoading">Loading...</div>
+
+  <table *ngIf="!isLoading && results.length > 0" class="result-table">
+    <thead>
+      <tr>
+        <th>Student Name</th>
+        <th>Score</th>
+        <th>Total</th>
+        <th>Percentage</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let result of results">
+        <td>{{ result.studentName }}</td>
+        <td>{{ result.score }}</td>
+        <td>{{ result.total }}</td>
+        <td>{{ (result.score / result.total) * 100 | percent : "1.2-2" }}</td>
+        <td>
+          <button
+            (click)="viewStudentResult(result.studentId)"
+            class="review-button"
+          >
+            Review
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button (click)="exportCSV()" class="export-button">Export CSV</button>
+  <button (click)="goBack()" class="back-button">Back to Tests</button>
+</div>
