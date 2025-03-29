@@ -54,7 +54,7 @@ export class ClassroomService {
       .concat(studentClassrooms);
   }
 
-  createClassroom(classroomId: string, classroomName: string, userId: string): void {
+  createClassroom(classroomId: string, classroomName: string, userId: string, username: string): void {
     const classrooms = this.getAllClassrooms();
     const newClassroom: ClassroomData = {
       classroomId,
@@ -62,6 +62,7 @@ export class ClassroomService {
       classroomCode: classroomId.slice(-6),
       createdAt: new Date(),
       teacherId: userId,
+      teacherName: username,
     };
 
     classrooms.push(newClassroom);
@@ -100,5 +101,32 @@ export class ClassroomService {
   getStudentsInClassroom(classroomId: string): string[] {
     const students = this.getClassroomStudents();
     return students[classroomId] || [];
+  }
+
+  deleteClassroom(classroomId: string): boolean {
+    const classrooms = this.getAllClassrooms();
+    const index = classrooms.findIndex((c) => c.classroomId === classroomId);
+
+    if (index !== -1) {
+      classrooms.splice(index, 1);
+      this.saveClassrooms(classrooms);
+
+      const students = this.getClassroomStudents();
+      delete students[classroomId];
+      this.saveClassroomStudents(students);
+
+      return true;
+    }
+    return false;
+  }
+
+  leaveClassroom(classroomId: string, userId: string): boolean {
+    const students = this.getClassroomStudents();
+    if (students[classroomId]) {
+      students[classroomId] = students[classroomId].filter(studentId => studentId !== userId);
+      this.saveClassroomStudents(students);
+      return true;
+    }
+    return false;
   }
 }

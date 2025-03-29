@@ -17,6 +17,7 @@ export class ClassroomListComponent {
   classrooms: ClassroomData[] = [];
   classroomName: string = '';
   classroomCode: string = '';
+  dropdownOpen: string | null = null;
   user: any = null;
 
   showCreatePrompt: boolean = false;
@@ -39,7 +40,6 @@ export class ClassroomListComponent {
     });
   }
 
-  /** Load classrooms related to the logged-in user */
   loadUserClassrooms(): void {
     this.classrooms = this.classroomService.getUserClassrooms(this.user.userId);
   }
@@ -69,7 +69,12 @@ export class ClassroomListComponent {
     }
 
     const classroomId = Date.now().toString();
-    this.classroomService.createClassroom(classroomId, this.classroomName, this.user.userId);
+    this.classroomService.createClassroom(
+      classroomId, 
+      this.classroomName, 
+      this.user.userId, 
+      this.user.username
+    );
     this.loadUserClassrooms();
 
     this.classroomName = '';
@@ -98,8 +103,39 @@ export class ClassroomListComponent {
     this.router.navigate(['/test-list', classroomId]);
   }
 
-  logout(): void {
-    this.authService.logout(); // Ensure AuthService provides a logout method
-    this.router.navigate(['/login']);
+  copyClassroomCode(classroomCode: string): void {
+    navigator.clipboard.writeText(classroomCode).then(() => {
+      alert('Classroom code copied to clipboard!');
+    });
+  }
+
+  confirmDeleteClassroom(classroomId: string): void {
+    const confirmation = confirm('Are you sure you want to delete this classroom? This action cannot be undone.');
+    if (confirmation) {
+      this.classroomService.deleteClassroom(classroomId);
+      this.loadUserClassrooms();
+    }
+  }
+
+  leaveClassroom(classroomId: string): void {
+    const confirmation = confirm('Are you sure you want to leave this classroom?');
+    if (confirmation) {
+      this.classroomService.leaveClassroom(classroomId, this.user.userId);
+      this.loadUserClassrooms();
+    }
+  }
+
+  toggleDropdown(classroomId: string): void {
+    this.dropdownOpen = this.dropdownOpen === classroomId ? null : classroomId;
+  }
+
+  closeDropdown(): void {
+    this.dropdownOpen = null;
+  }
+
+  closeDropdownOnClickOutside(event: MouseEvent): void {
+    if (!(event.target as HTMLElement).closest(".relative")) {
+      this.closeDropdown();
+    }
   }
 }

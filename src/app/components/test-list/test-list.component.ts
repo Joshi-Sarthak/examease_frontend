@@ -19,7 +19,7 @@ export class TestListComponent {
   classroomId: string = '';
   tests: TestData[] = [];
   userRole: 'teacher' | 'student' | null = null;
-  studentResults: { [testId: string]: TestResult | null } = {}; // Store student results
+  studentResults: { [testId: string]: TestResult | null } = {};
   dropdownOpen: { [key: string]: boolean } = {};
   currentUserId: string = '';
 
