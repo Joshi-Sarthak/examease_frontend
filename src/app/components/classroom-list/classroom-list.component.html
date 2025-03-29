@@ -1,49 +1,44 @@
 <h2>Classrooms</h2>
 
-  <!-- Classroom Cards Grid -->
-  <h2 class="section-header">Your Classrooms</h2>
-  <div class="cards-grid">
-    <div
-      class="card"
-      *ngFor="let classroom of classrooms"
-      (click)="openClassroom(classroom.classroomId)"
-    >
-      <h3 class="card-title">{{ classroom.classroomName }}</h3>
-      <p class="card-code">Code: {{ classroom.classroomCode }}</p>
+<h2 class="section-header">Your Classrooms</h2>
+<div class="cards-grid">
+  <div
+    class="card"
+    *ngFor="let classroom of classrooms"
+    (click)="openClassroom(classroom.classroomId)"
+  >
+    <h3 class="card-title">{{ classroom.classroomName }}</h3>
+    <p class="card-code">Code: {{ classroom.classroomCode }}</p>
+  </div>
+</div>
+
+<div class="fixed-buttons">
+  <button class="action-btn" (click)="toggleCreatePrompt()">
+    Create Classroom
+  </button>
+  <button class="action-btn" (click)="toggleJoinPrompt()">
+    Join Classroom
+  </button>
+</div>
+
+<div class="prompt-overlay" *ngIf="showCreatePrompt">
+  <div class="prompt-container">
+    <h3>Create Classroom</h3>
+    <input [(ngModel)]="classroomName" placeholder="Enter classroom name" />
+    <div class="prompt-buttons">
+      <button (click)="createClassroom()">Submit</button>
+      <button (click)="cancelCreate()">Cancel</button>
     </div>
   </div>
+</div>
 
-  <!-- Fixed Action Buttons -->
-  <div class="fixed-buttons">
-    <button class="action-btn" (click)="toggleCreatePrompt()">
-      Create Classroom
-    </button>
-    <button class="action-btn" (click)="toggleJoinPrompt()">
-      Join Classroom
-    </button>
-  </div>
-
-  <!-- Create Classroom Prompt -->
-  <div class="prompt-overlay" *ngIf="showCreatePrompt">
-    <div class="prompt-container">
-      <h3>Create Classroom</h3>
-      <input [(ngModel)]="classroomName" placeholder="Enter classroom name" />
-      <div class="prompt-buttons">
-        <button (click)="createClassroom()">Submit</button>
-        <button (click)="cancelCreate()">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Join Classroom Prompt -->
-  <div class="prompt-overlay" *ngIf="showJoinPrompt">
-    <div class="prompt-container">
-      <h3>Join Classroom</h3>
-      <input [(ngModel)]="classroomCode" placeholder="Enter classroom code" />
-      <div class="prompt-buttons">
-        <button (click)="joinClassroom()">Submit</button>
-        <button (click)="cancelJoin()">Cancel</button>
-      </div>
+<div class="prompt-overlay" *ngIf="showJoinPrompt">
+  <div class="prompt-container">
+    <h3>Join Classroom</h3>
+    <input [(ngModel)]="classroomCode" placeholder="Enter classroom code" />
+    <div class="prompt-buttons">
+      <button (click)="joinClassroom()">Submit</button>
+      <button (click)="cancelJoin()">Cancel</button>
     </div>
   </div>
 </div>
