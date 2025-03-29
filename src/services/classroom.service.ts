@@ -10,29 +10,33 @@ export class ClassroomService {
 
   constructor() {}
 
+  private getFromLocalStorage(key: string): any {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : {};
+  }
+
+  private saveToLocalStorage(key: string, data: any): void {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+
   private getAllClassrooms(): ClassroomData[] {
-    const classrooms = localStorage.getItem(this.classroomsKey);
-    return classrooms ? JSON.parse(classrooms) : [];
+    return this.getFromLocalStorage(this.classroomsKey) || [];
   }
 
   private saveClassrooms(classrooms: ClassroomData[]): void {
-    localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
+    this.saveToLocalStorage(this.classroomsKey, classrooms);
   }
 
   private getClassroomStudents(): Record<string, string[]> {
-    const students = localStorage.getItem(this.classroomStudentsKey);
-    return students ? JSON.parse(students) : {};
+    return this.getFromLocalStorage(this.classroomStudentsKey);
   }
 
   private saveClassroomStudents(students: Record<string, string[]>): void {
-    localStorage.setItem(this.classroomStudentsKey, JSON.stringify(students));
+    this.saveToLocalStorage(this.classroomStudentsKey, students);
   }
 
   private getStudentClassrooms(userId: string): ClassroomData[] {
-    const studentData = localStorage.getItem('classroomStudents');
-    if (!studentData) return [];
-
-    const studentMap = JSON.parse(studentData) as Record<string, string[]>;
+    const studentMap = this.getClassroomStudents();
     const classroomIds = Object.keys(studentMap).filter(classroomId =>
       studentMap[classroomId].includes(userId)
     );
@@ -70,11 +74,14 @@ export class ClassroomService {
 
     if (classroom) {
       const students = this.getClassroomStudents();
-      if (!students[classroom.classroomId]) {
-        students[classroom.classroomId] = [];
+      const classroomId = classroom.classroomId;
+
+      if (!students[classroomId]) {
+        students[classroomId] = [];
       }
-      if (!students[classroom.classroomId].includes(userId)) {
-        students[classroom.classroomId].push(userId);
+
+      if (!students[classroomId].includes(userId)) {
+        students[classroomId].push(userId);
         this.saveClassroomStudents(students);
       }
     }
@@ -92,6 +99,8 @@ export class ClassroomService {
 
   getStudentsInClassroom(classroomId: string): string[] {
     const students = this.getClassroomStudents();
+    console.log('Students in classroom:', students);
+    console.log('Searching for students in classroomId:', classroomId);
     return students[classroomId] || [];
   }
 }

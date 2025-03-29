@@ -3,7 +3,11 @@
 
   <div *ngIf="isLoading">Loading...</div>
 
-  <table *ngIf="!isLoading && results.length > 0" class="result-table">
+  <div *ngIf="studentsNotTested.length === 0 && !isLoading">
+    Classroom is empty
+  </div>
+
+  <table *ngIf="!isLoading && studentsNotTested.length > 0" class="result-table">
     <thead>
       <tr>
         <th>Student Name</th>
@@ -31,6 +35,5 @@
     </tbody>
   </table>
 
-  <button (click)="exportCSV()" class="export-button">Export CSV</button>
   <button (click)="goBack()" class="back-button">Back to Tests</button>
 </div>

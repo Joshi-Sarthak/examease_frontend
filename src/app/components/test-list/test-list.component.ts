@@ -72,7 +72,10 @@ export class TestListComponent {
 
   viewResults(testId: string): void {
     if (this.userRole === 'teacher') {
-      this.router.navigate(['/teacher-result', testId]);
+      console.log('View results clicked', this.classroomId);
+      this.router.navigate(['/teacher-result', testId], {
+        queryParams: { classroomId: this.classroomId },
+      });
     }
   }
 
