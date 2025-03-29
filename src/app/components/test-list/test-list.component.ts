@@ -4,7 +4,9 @@ import { CommonModule } from '@angular/common';
 import { ClassroomService } from '../../../services/classroom.service';
 import { TestService } from '../../../services/test.service';
 import { AuthService } from '../../../services/auth.service';
+import { ResultService } from '../../../services/result.service';
 import { TestData } from '../../../models/test.model';
+import { TestResult } from '../../../models/test-result.model';
 
 @Component({
   selector: 'app-test-list',
@@ -17,13 +19,16 @@ export class TestListComponent {
   classroomId: string = '';
   tests: TestData[] = [];
   userRole: 'teacher' | 'student' | null = null;
+  studentResults: { [testId: string]: TestResult | null } = {}; // Store student results
   dropdownOpen: { [key: string]: boolean } = {};
+  currentUserId: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private classroomService: ClassroomService,
     private testService: TestService,
+    private resultService: ResultService,
     private authService: AuthService
   ) {}
 
@@ -33,6 +38,7 @@ export class TestListComponent {
       if (!user) {
         this.router.navigate(['/login']);
       } else {
+        this.currentUserId = user.userId;
         this.loadData(user.userId);
       }
     });
@@ -42,6 +48,13 @@ export class TestListComponent {
     this.tests = this.testService.getTests(this.classroomId);
     const classroom = this.classroomService.getClassroomById(this.classroomId);
     this.userRole = classroom?.teacherId === userId ? 'teacher' : 'student';
+
+    if (this.userRole === 'student') {
+      this.tests.forEach((test) => {
+        const result = this.resultService.getResults(test.testId).find(r => r.studentId === userId);
+        this.studentResults[test.testId] = result || null;
+      });
+    }
   }
 
   goBack(): void {
@@ -66,7 +79,6 @@ export class TestListComponent {
   }
 
   editTest(testId: string): void {
-    console.log('Edit test clicked', this.classroomId, testId);
     this.router.navigate(['/question-builder', this.classroomId, testId]);
   }
 

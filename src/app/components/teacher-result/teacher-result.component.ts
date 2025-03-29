@@ -56,7 +56,7 @@ export class TeacherResultComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/classroom', this.testId, 'tests']);
+    this.router.navigate(['/test-list', this.testId, 'tests']);
   }
 
   private findStudentsNotTested() {

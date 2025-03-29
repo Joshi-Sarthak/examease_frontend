@@ -1,6 +1,11 @@
 <div class="result-container">
   <h2>Test Results</h2>
 
+  <div class="header-bar">
+    <button class="back-btn" (click)="goBack()">← Back</button>
+    <h2>Test Results</h2>
+  </div>
+
   <div *ngIf="isLoading">Loading...</div>
 
   <div *ngIf="studentsNotTested.length === 0 && !isLoading">

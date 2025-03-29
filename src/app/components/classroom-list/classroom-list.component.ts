@@ -97,4 +97,9 @@ export class ClassroomListComponent {
   openClassroom(classroomId: string): void {
     this.router.navigate(['/test-list', classroomId]);
   }
+
+  logout(): void {
+    this.authService.logout(); // Ensure AuthService provides a logout method
+    this.router.navigate(['/login']);
+  }
 }

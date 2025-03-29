@@ -1,46 +1,71 @@
 <div class="container">
-  <button class="back-btn" (click)="goBack()">Back to Classrooms</button>
-  <h2>Tests for Classroom</h2>
+  <!-- Back Button -->
+  <button class="back-btn" (click)="goBack()">⬅ Back to Classrooms</button>
 
+  <h2 class="header">📚 Tests for Classroom</h2>
+
+  <!-- Test List -->
   <div *ngIf="tests.length > 0" class="test-list">
-    <div class="test-item" *ngFor="let test of tests">
-      <h3>{{ test.testName }}</h3>
-      <p>Start: {{ test.startFrom | date : "short" }}</p>
-      <p>Deadline: {{ test.deadlineTime | date : "short" }}</p>
-      <p>Duration: {{ test.testTime }} mins</p>
+    <div *ngFor="let test of tests" class="test-card">
+      <h3 class="test-title">{{ test.testName }}</h3>
+      <p class="test-info">
+        📅 <b>Start:</b> {{ test.startFrom | date : "short" }}
+      </p>
+      <p class="test-info">
+        ⏳ <b>Deadline:</b> {{ test.deadlineTime | date : "short" }}
+      </p>
+      <p class="test-info">⏱ <b>Duration:</b> {{ test.testTime }} mins</p>
 
-      <!-- Show different options based on user role -->
-      <div *ngIf="userRole === 'teacher'" class="dropdown">
+      <!-- Teacher Options -->
+      <div *ngIf="userRole === 'teacher'" class="teacher-options">
         <button
-          class="dropdown-btn"
+          class="options-btn"
           (click)="toggleDropdown(test.testId, $event)"
         >
           Options ▼
         </button>
-        <div class="dropdown-content" *ngIf="dropdownOpen[test.testId]">
-          <a (click)="editTest(test.testId)">Edit Test</a>
-          <a (click)="deleteTest(test.testId)">Delete Test</a>
-          <a (click)="viewResults(test.testId)">View Results</a>
-          <!-- New button -->
+        <div *ngIf="dropdownOpen[test.testId]" class="dropdown-content">
+          <a (click)="editTest(test.testId)">✏ Edit Test</a>
+          <a (click)="deleteTest(test.testId)">🗑 Delete Test</a>
+          <a (click)="viewResults(test.testId)">📊 View Results</a>
         </div>
       </div>
 
-      <div *ngIf="userRole === 'student'">
-        <button class="take-test-btn" (click)="startTest(test.testId)">
-          Take Test
+      <!-- Student Options -->
+      <div *ngIf="userRole === 'student'" class="student-options">
+        <!-- Show "Take Test" if student hasn't taken it -->
+        <button
+          *ngIf="!studentResults[test.testId]"
+          class="take-test-btn"
+          (click)="startTest(test.testId)"
+        >
+          📝 Take Test
         </button>
+        <!-- Show Student's Test Result if taken -->
+        <div *ngIf="studentResults[test.testId]" class="bg">
+          <p class="result-info">
+            <strong>✅ Score:</strong>
+            {{ studentResults[test.testId]?.score }} /
+            {{ studentResults[test.testId]?.total }}
+          </p>
+          <p class="result-info">
+            <strong>📈 Percentage:</strong>
+            {{ studentResults[test.testId]?.percentage }}%
+          </p>
+        </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="tests.length === 0" class="no-tests">No tests available</div>
+  <!-- No Tests Available -->
+  <div *ngIf="tests.length === 0" class="no-tests">🚫 No tests available</div>
 
   <!-- Only teachers can create tests -->
   <button
     *ngIf="userRole === 'teacher'"
-    class="create-btn fixed-buttons"
+    class="create-btn"
     (click)="navigateToQuestionBuilder()"
   >
-    Create New Test
+    ➕ Create New Test
   </button>
 </div>
