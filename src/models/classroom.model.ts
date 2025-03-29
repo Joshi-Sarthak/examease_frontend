@@ -4,7 +4,9 @@ export interface ClassroomData {
   teacherId: string;
   classroomCode: string;
   createdAt: Date;
-  role?: 'teacher' | 'student';
 }
 
-  
+export interface ClassroomStudent {
+  classroomId: string;
+  studentId: string;
+}
