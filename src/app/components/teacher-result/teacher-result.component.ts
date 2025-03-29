@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; 
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ResultService } from '../../../services/result.service';
@@ -14,8 +14,16 @@ import { ClassroomService } from '../../../services/classroom.service';
 export class TeacherResultComponent implements OnInit {
   testId!: string;
   results: any[] = [];
+  studentsInClassroom: string[] = [];
   studentsNotTested: string[] = [];
   isLoading: boolean = true;
+
+  totalStudents: number = 0;
+  studentsAttempted: number = 0;
+  studentsNotAttempted: number = 0;
+  classAverage: number = 0;
+  highestScore: number = 0;
+  lowestScore: number = 0;
 
   constructor(
     private route: ActivatedRoute, 
@@ -27,12 +35,31 @@ export class TeacherResultComponent implements OnInit {
   ngOnInit() {
     this.testId = this.route.snapshot.paramMap.get('testId')!;
     this.fetchTestResults();
-    this.isLoading = false;
     this.findStudentsNotTested();
+    this.calculateStats();
+    this.isLoading = false;
   }
 
   fetchTestResults() {
     this.results = this.resultService.getResults(this.testId);
+  }
+
+  calculateStats() {
+    if (this.results.length === 0) return;
+
+    const scores = this.results.map(r => r.score);
+    const totals = this.results.map(r => r.total);
+    
+    this.studentsAttempted = this.results.length;
+    this.totalStudents = this.studentsInClassroom.length;
+    this.studentsNotAttempted = this.totalStudents - this.studentsAttempted;
+
+    const totalScores = scores.reduce((acc, val) => acc + val, 0);
+    const totalMax = totals.reduce((acc, val) => acc + val, 0);
+
+    this.classAverage = totalMax > 0 ? (totalScores / totalMax) * 100 : 0;
+    this.highestScore = Math.max(...scores);
+    this.lowestScore = Math.min(...scores);
   }
 
   viewStudentResult(studentId: string) {
@@ -42,7 +69,7 @@ export class TeacherResultComponent implements OnInit {
   exportCSV() {
     let csvContent = "Student Name,Score,Total,Percentage\n";
     this.results.forEach((result) => {
-      const percentage = ((result.score / result.total)).toFixed(2);
+      const percentage = ((result.score / result.total) * 100).toFixed(2);
       csvContent += `${result.studentName},${result.score},${result.total},${percentage}%\n`;
     });
 
@@ -61,9 +88,8 @@ export class TeacherResultComponent implements OnInit {
 
   private findStudentsNotTested() {
     const classroomId = this.route.snapshot.queryParamMap.get('classroomId')!;
-    const studentsInClassroom = this.classroomService.getStudentsInClassroom(classroomId);
+    this.studentsInClassroom = this.classroomService.getStudentsInClassroom(classroomId);
     const studentsWithResults = this.results.map(result => result.studentId);
-    this.studentsNotTested = studentsInClassroom.filter(studentId => !studentsWithResults.includes(studentId));
+    this.studentsNotTested = this.studentsInClassroom.filter(studentId => !studentsWithResults.includes(studentId));
   }
-  
 }

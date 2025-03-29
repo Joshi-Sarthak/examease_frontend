@@ -1,111 +1,209 @@
 /* Container for the result page */
 .result-container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  /* Header Bar with Back Button */
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header Bar with Back and Export Buttons */
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+}
+
+/* Back Button */
+.back-btn {
+  background-color: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.back-btn:hover {
+  color: #0056b3;
+}
+
+/* Page Title */
+.header-bar h2 {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+/* Export Button */
+.export-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.export-btn:hover {
+  background-color: #218838;
+}
+
+/* Loading Indicator */
+.loading {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+/* Summary Stats Box */
+.stats-box {
+  display: flex;
+  justify-content: space-between;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item {
+  text-align: center;
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Table Styling */
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.result-table th,
+.result-table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.result-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #333;
+}
+
+.result-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Review Button */
+.review-button {
+  background-color: #4caf50;
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.review-button:hover {
+  background-color: #45a049;
+}
+
+/* Unattempted Students List */
+.unattempted-list {
+  background: #ffefc1;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.unattempted-list h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #d9534f;
+}
+
+.unattempted-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+}
+
+.unattempted-list li {
+  font-size: 1rem;
+  color: #444;
+}
+
+/* Button Group */
+.button-group {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.export-button,
+.back-button {
+  background-color: #007bff;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px;
+}
+
+.export-button:hover,
+.back-button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .header-bar {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 10px;
+      flex-direction: column;
+      text-align: center;
   }
-  
-  .back-btn {
-    background-color: transparent;
-    border: none;
-    font-size: 1rem;
-    margin-right: 10px;
-    color: #007bff;
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-  
-  .back-btn:hover {
-    color: #0056b3;
-  }
-  
+
   .header-bar h2 {
-    flex-grow: 1;
-    text-align: center;
-    font-size: 2rem;
-    color: #333;
+      margin-top: 10px;
   }
-  
-  /* Loading Indicator */
-  .loading {
-    text-align: center;
-    padding: 20px;
-    font-size: 1.2rem;
-    color: #555;
+
+  .stats-box {
+      flex-direction: column;
+      text-align: center;
   }
-  
-  /* Table Styling */
-  .result-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+
+  .stat-item {
+      margin-bottom: 10px;
   }
-  
-  .result-table th,
-  .result-table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    text-align: center;
-  }
-  
-  .result-table th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .result-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-  /* Review Button */
-  .review-button {
-    background-color: #4caf50;
-    border: none;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .review-button:hover {
-    background-color: #45a049;
-  }
-  
-  /* Button Group for Export & Back Buttons */
+
   .button-group {
-    text-align: center;
-    margin-top: 20px;
+      display: flex;
+      flex-direction: column;
   }
-  
+
   .export-button,
   .back-button {
-    background-color: #007bff;
-    border: none;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-right: 10px;
+      width: 100%;
+      margin-bottom: 10px;
   }
-  
-  .export-button:hover,
-  .back-button:hover {
-    background-color: #0056b3;
-  }
-  
+}

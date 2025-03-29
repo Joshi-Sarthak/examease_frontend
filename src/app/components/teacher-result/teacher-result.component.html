@@ -1,18 +1,30 @@
 <div class="result-container">
-  <h2>Test Results</h2>
 
   <div class="header-bar">
     <button class="back-btn" (click)="goBack()">← Back</button>
     <h2>Test Results</h2>
+    <button class="export-btn" (click)="exportCSV()">📥 Download CSV</button>
   </div>
 
   <div *ngIf="isLoading">Loading...</div>
 
-  <div *ngIf="studentsNotTested.length === 0 && !isLoading">
+  <div *ngIf="studentsInClassroom.length === 0 && !isLoading">
     Classroom is empty
   </div>
 
-  <table *ngIf="!isLoading && studentsNotTested.length > 0" class="result-table">
+  <div class="stats-container">
+    <h3>Class Performance Stats</h3>
+    <ul>
+      <li><strong>Total Students:</strong> {{ totalStudents }}</li>
+      <li><strong>Students Attempted:</strong> {{ studentsAttempted }}</li>
+      <li><strong>Students Not Attempted:</strong> {{ studentsNotAttempted }}</li>
+      <li><strong>Class Average Score:</strong> {{ classAverage | number: '1.2-2' }}%</li>
+      <li><strong>Highest Score:</strong> {{ highestScore }}</li>
+      <li><strong>Lowest Score:</strong> {{ lowestScore }}</li>
+    </ul>
+  </div>
+
+  <table *ngIf="!isLoading && results.length > 0" class="result-table">
     <thead>
       <tr>
         <th>Student Name</th>
@@ -27,12 +39,9 @@
         <td>{{ result.studentName }}</td>
         <td>{{ result.score }}</td>
         <td>{{ result.total }}</td>
-        <td>{{ (result.score / result.total) * 100 | percent : "1.2-2" }}</td>
+        <td>{{ (result.score / result.total) * 100 | number: '1.2-2' }}%</td>
         <td>
-          <button
-            (click)="viewStudentResult(result.studentId)"
-            class="review-button"
-          >
+          <button (click)="viewStudentResult(result.studentId)" class="review-button">
             Review
           </button>
         </td>

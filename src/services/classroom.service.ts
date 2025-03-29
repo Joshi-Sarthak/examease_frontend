@@ -99,8 +99,6 @@ export class ClassroomService {
 
   getStudentsInClassroom(classroomId: string): string[] {
     const students = this.getClassroomStudents();
-    console.log('Students in classroom:', students);
-    console.log('Searching for students in classroomId:', classroomId);
     return students[classroomId] || [];
   }
 }
