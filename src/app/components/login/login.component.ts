@@ -3,12 +3,11 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router'; // Import RouterModule
 
 @Component({
+  imports: [CommonModule, FormsModule],
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule], // Include RouterModule here
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
@@ -28,9 +27,5 @@ export class LoginComponent {
     if (success) {
       this.router.navigate(['/classroom-list']);
     }
-  }
-
-  navigateToSignup(): void {
-    this.router.navigate(['/signup']);
   }
 }
