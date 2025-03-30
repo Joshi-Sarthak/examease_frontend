@@ -83,7 +83,8 @@ export class TeacherResultComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/test-list', this.testId, 'tests']);
+    const classroomId = this.route.snapshot.queryParamMap.get('classroomId')!;
+    this.router.navigate(['/test-list', classroomId]);
   }
 
   private findStudentsNotTested() {

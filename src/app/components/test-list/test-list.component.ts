@@ -61,12 +61,12 @@ export class TestListComponent {
     this.router.navigate(['/classroom-list']);
   }
 
-  isTestActive(startTime: string, deadlineTime: string): boolean {
-    const now = new Date().getTime(); // Get current time in milliseconds
+  isTestActive(startTime: Date, deadlineTime: Date): boolean {
+    const now = new Date().getTime();
     const start = new Date(startTime).getTime();
     const deadline = new Date(deadlineTime).getTime();
     
-    return now >= start && now <= deadline; // Returns true if test is active
+    return now >= start && now <= deadline;
   }
   
   

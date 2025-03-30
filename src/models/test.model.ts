@@ -8,6 +8,7 @@ export interface TestData {
   startFrom: Date;
   deadlineTime: Date;
   testTime: number;
-  result: number;
+  result: number; //replace with result object
   classroomId?: string;
 }
+

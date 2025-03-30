@@ -1,10 +1,8 @@
 <div class="container">
-  <!-- Back Button -->
   <button class="back-btn" (click)="goBack()">⬅ Back to Classrooms</button>
 
   <h2 class="header">📚 Tests for Classroom</h2>
 
-  <!-- Test List -->
   <div *ngIf="tests.length > 0" class="test-list">
     <div *ngFor="let test of tests" class="test-card">
       <h3 class="test-title">{{ test.testName }}</h3>
@@ -16,7 +14,6 @@
       </p>
       <p class="test-info">⏱ <b>Duration:</b> {{ test.testTime }} mins</p>
 
-      <!-- Teacher Options -->
       <div *ngIf="userRole === 'teacher'" class="teacher-options">
         <button
           class="options-btn"
@@ -25,34 +22,19 @@
           Options ▼
         </button>
         <div *ngIf="dropdownOpen[test.testId]" class="dropdown-content">
-          <button
-            *ngIf="
-              !studentResults[test.testId] &&
-              isTestActive(
-                test.startFrom.toISOString(),
-                test.deadlineTime.toISOString()
-              )
-            "
-            class="take-test-btn"
-            (click)="startTest(test.testId)"
-          >
-            📝 Take Test
-          </button>
-
+          <a (click)="editTest(test.testId)">Edit Test</a>
           <a (click)="deleteTest(test.testId)">🗑 Delete Test</a>
           <a (click)="viewResults(test.testId)">📊 View Results</a>
         </div>
       </div>
 
-      <!-- Student Options -->
       <div *ngIf="userRole === 'student'" class="student-options">
-        <!-- Show "Take Test" only if the test is active and the student hasn't taken it -->
         <button
           *ngIf="
             !studentResults[test.testId] &&
             isTestActive(
-              test.startFrom.toISOString(),
-              test.deadlineTime.toISOString()
+              test.startFrom,
+              test.deadlineTime
             )
           "
           class="take-test-btn"
@@ -61,7 +43,6 @@
           📝 Take Test
         </button>
 
-        <!-- Show Student's Test Result if taken -->
         <div *ngIf="studentResults[test.testId]" class="bg">
           <p class="result-info">
             <strong>✅ Score:</strong>
@@ -77,10 +58,8 @@
     </div>
   </div>
 
-  <!-- No Tests Available -->
   <div *ngIf="tests.length === 0" class="no-tests">🚫 No tests available</div>
 
-  <!-- Only teachers can create tests -->
   <button
     *ngIf="userRole === 'teacher'"
     class="create-btn"
