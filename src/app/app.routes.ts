@@ -8,11 +8,13 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { StudentResultComponent } from './components/student-result/student-result.component';
 import { TeacherResultComponent } from './components/teacher-result/teacher-result.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'profile', component: ProfileComponent }, 
   { path: 'classroom-list', component: ClassroomListComponent },
   { path: 'test-list/:classroomId', component: TestListComponent },
   { path: 'question-builder/:classroomId', component: QuestionBuilderComponent },

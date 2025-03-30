@@ -8,4 +8,6 @@
   <input type="password" [(ngModel)]="password" placeholder="Enter password" />
 
   <button (click)="login()">Login</button>
+
+  <p>Don't have an account? <a [routerLink]="'/signup'">Sign up</a></p>
 </div>

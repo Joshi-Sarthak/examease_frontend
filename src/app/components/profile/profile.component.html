@@ -1,0 +1,20 @@
+<div class="profile-card">
+  <div class="profile-header">
+    <img [src]="profilePicture" alt="Profile Picture" class="profile-pic" />
+    <h2>{{ name }}</h2>
+    <p class="role">Role: {{ role }}</p>
+  </div>
+
+  <div class="profile-body">
+    <label>Name:</label>
+    <input type="text" [(ngModel)]="name" />
+
+    <label>Email:</label>
+    <input type="email" [(ngModel)]="email" disabled />
+
+    <label>Profile Picture URL:</label>
+    <input type="text" [(ngModel)]="profilePicture" />
+
+    <button (click)="saveProfile()">Save</button>
+  </div>
+</div>

@@ -2,27 +2,12 @@
   <h2>Test Result</h2>
 
   <div *ngIf="isLoading">Loading...</div>
+  <div *ngIf="errorMessage">{{ errorMessage }}</div>
 
   <div *ngIf="!isLoading && result">
+    <p><strong>Student:</strong> {{ result.studentName }}</p>
     <p><strong>Score:</strong> {{ result.score }}/{{ result.total }}</p>
-
-    <div class="question-review" *ngIf="result.reviewAllowed">
-      <h3>Review Your Answers</h3>
-      <div *ngFor="let question of result.questions">
-        <p><strong>Q:</strong> {{ question.text }}</p>
-        <p
-          [ngClass]="{
-            correct: question.isCorrect,
-            incorrect: !question.isCorrect
-          }"
-        >
-          Your Answer: {{ question.studentAnswer }}
-        </p>
-        <p class="correct-answer">
-          Correct Answer: {{ question.correctAnswer }}
-        </p>
-      </div>
-    </div>
+    <p><strong>Percentage:</strong> {{ result.percentage }}%</p>
   </div>
 
   <button (click)="goBack()" class="back-button">Back to Tests</button>

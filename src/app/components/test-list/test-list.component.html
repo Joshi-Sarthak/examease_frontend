@@ -25,7 +25,20 @@
           Options ▼
         </button>
         <div *ngIf="dropdownOpen[test.testId]" class="dropdown-content">
-          <a (click)="editTest(test.testId)">✏ Edit Test</a>
+          <button
+            *ngIf="
+              !studentResults[test.testId] &&
+              isTestActive(
+                test.startFrom.toISOString(),
+                test.deadlineTime.toISOString()
+              )
+            "
+            class="take-test-btn"
+            (click)="startTest(test.testId)"
+          >
+            📝 Take Test
+          </button>
+
           <a (click)="deleteTest(test.testId)">🗑 Delete Test</a>
           <a (click)="viewResults(test.testId)">📊 View Results</a>
         </div>
@@ -33,14 +46,21 @@
 
       <!-- Student Options -->
       <div *ngIf="userRole === 'student'" class="student-options">
-        <!-- Show "Take Test" if student hasn't taken it -->
+        <!-- Show "Take Test" only if the test is active and the student hasn't taken it -->
         <button
-          *ngIf="!studentResults[test.testId]"
+          *ngIf="
+            !studentResults[test.testId] &&
+            isTestActive(
+              test.startFrom.toISOString(),
+              test.deadlineTime.toISOString()
+            )
+          "
           class="take-test-btn"
           (click)="startTest(test.testId)"
         >
           📝 Take Test
         </button>
+
         <!-- Show Student's Test Result if taken -->
         <div *ngIf="studentResults[test.testId]" class="bg">
           <p class="result-info">

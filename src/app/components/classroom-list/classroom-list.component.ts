@@ -103,6 +103,11 @@ export class ClassroomListComponent {
     this.router.navigate(['/test-list', classroomId]);
   }
 
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   copyClassroomCode(classroomCode: string): void {
     navigator.clipboard.writeText(classroomCode).then(() => {
       alert('Classroom code copied to clipboard!');
