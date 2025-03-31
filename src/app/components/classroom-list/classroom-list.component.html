@@ -1,67 +1,51 @@
-<div class="container mx-auto p-4 max-w-3xl">
-  <header class="flex justify-between items-center mb-5">
-    <h1 class="text-2xl font-semibold text-gray-800">My Classrooms</h1>
+<div class="container mx-auto p-6 max-w-5xl">
+  <!-- Header Section -->
+  <header class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-black">My Classrooms</h1>
+    <div class="flex gap-3">
+      <button
+        class="bg-black text-white px-4 py-2 rounded-md font-medium hover:opacity-80 transition"
+        (click)="toggleJoinPrompt()"
+      >
+        Join Classroom
+      </button>
+      <button
+        class="bg-black text-white px-4 py-2 rounded-md font-medium hover:opacity-80 transition"
+        (click)="toggleCreatePrompt()"
+      >
+        + Create Classroom
+      </button>
+    </div>
   </header>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <!-- Classrooms Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     <div
-      class="bg-white rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow duration-200"
+      class="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
       *ngFor="let classroom of classrooms"
       (click)="openClassroom(classroom)"
     >
-      <div class="flex justify-between items-center mb-2">
-        <h3 class="text-lg font-medium text-gray-800">
+      <div class="flex justify-between items-start">
+        <h3 class="text-lg font-bold text-black">
           {{ classroom.classroomName }}
         </h3>
-        <div class="relative">
-          <button
-            class="text-xl text-gray-500 hover:text-gray-700"
-            (click)="
-              $event.stopPropagation(); toggleDropdown(classroom.classroomId)
-            "
-          >
-            ⋮
-          </button>
-          <div
-            *ngIf="dropdownOpen === classroom.classroomId"
-            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg overflow-hidden z-10"
-          >
-            <button
-              *ngIf="classroom.teacherId === user.userId"
-              class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              (click)="
-                copyClassroomCode(classroom.classroomCode); closeDropdown()
-              "
-            >
-              📋 Copy Code
-            </button>
-            <button
-              *ngIf="classroom.teacherId === user.userId"
-              class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
-              (click)="
-                confirmDeleteClassroom(classroom.classroomId); closeDropdown()
-              "
-            >
-              🗑️ Delete Classroom
-            </button>
-            <button
-              *ngIf="classroom.teacherId !== user.userId"
-              class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              (click)="leaveClassroom(classroom.classroomId); closeDropdown()"
-            >
-              🚪 Leave Classroom
-            </button>
-          </div>
-        </div>
+        <button
+          class="text-xl text-gray-500 hover:text-gray-700"
+          (click)="
+            $event.stopPropagation(); toggleDropdown(classroom.classroomId)
+          "
+        >
+          ⋮
+        </button>
       </div>
-      <p class="text-sm text-gray-600 mb-1">
+      <p class="text-sm text-gray-500 mt-2">
         <span *ngIf="classroom.teacherId === user.userId">Created by You</span>
         <span *ngIf="classroom.teacherId !== user.userId"
           >Created by: {{ classroom.teacherName }}</span
         >
       </p>
       <p
-        class="text-sm text-gray-600"
+        class="text-sm text-gray-600 mt-1 font-medium"
         *ngIf="classroom.teacherId === user.userId"
       >
         Code:
@@ -69,77 +53,132 @@
           classroom.classroomCode
         }}</span>
       </p>
-    </div>
-  </div>
 
-  <div class="fixed bottom-5 right-5 flex flex-col gap-2">
-    <button
-      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
-      (click)="toggleCreatePrompt()"
-    >
-      Create Classroom
-    </button>
-    <button
-      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
-      (click)="toggleJoinPrompt()"
-    >
-      Join Classroom
-    </button>
-  </div>
-
-  <div
-    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
-    *ngIf="showCreatePrompt"
-  >
-    <div class="bg-white rounded-lg p-6 w-96">
-      <h3 class="text-lg font-semibold mb-4">Create Classroom</h3>
-      <input
-        type="text"
-        [(ngModel)]="classroomName"
-        placeholder="Enter classroom name"
-        class="w-full p-2 border rounded mb-4"
-      />
-      <div class="flex justify-around">
+      <!-- Dropdown Menu -->
+      <div
+        *ngIf="dropdownOpen === classroom.classroomId"
+        class="absolute right-5 mt-2 w-48 bg-white rounded-md shadow-lg overflow-hidden z-10"
+      >
         <button
-          class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
-          (click)="createClassroom()"
+          *ngIf="classroom.teacherId === user.userId"
+          class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          (click)="copyClassroomCode(classroom.classroomCode); closeDropdown()"
         >
-          Submit
+          📋 Copy Code
         </button>
         <button
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
-          (click)="cancelCreate()"
+          *ngIf="classroom.teacherId === user.userId"
+          class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+          (click)="
+            confirmDeleteClassroom(classroom.classroomId); closeDropdown()
+          "
         >
-          Cancel
+          🗑️ Delete Classroom
+        </button>
+        <button
+          *ngIf="classroom.teacherId !== user.userId"
+          class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          (click)="leaveClassroom(classroom.classroomId); closeDropdown()"
+        >
+          🚪 Leave Classroom
         </button>
       </div>
     </div>
   </div>
 
+  <!-- Create Classroom Modal -->
+  <div
+    class="fixed inset-0 bg-black bg-opacity-100 flex justify-center items-center"
+    *ngIf="showCreatePrompt"
+  >
+    <div class="bg-white rounded-xl p-6 w-[400px] shadow-lg">
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-xl font-bold text-black">Create Classroom</h3>
+        <button class="text-gray-500 hover:text-black" (click)="cancelCreate()">
+          ✖
+        </button>
+      </div>
+
+      <!-- Modal Description -->
+      <p class="text-gray-500 text-sm mb-4">
+        Enter a name for your new classroom.
+      </p>
+
+      <!-- Input Field -->
+      <label for="classroomName" class="text-black font-medium text-sm"
+        >Classroom Name</label
+      >
+      <input
+        id="classroomName"
+        type="text"
+        [(ngModel)]="classroomName"
+        placeholder="Enter classroom name"
+        class="w-full border rounded-lg px-3 py-2 text-gray-700 mt-2 focus:outline-none focus:ring-1 focus:ring-black"
+      />
+
+      <!-- Modal Buttons -->
+      <div class="flex justify-end gap-3 mt-5">
+        <button
+          class="border border-gray-400 text-black px-4 py-2 rounded-md hover:bg-gray-100 transition"
+          (click)="cancelCreate()"
+        >
+          Cancel
+        </button>
+        <button
+          class="bg-black text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+          (click)="createClassroom()"
+        >
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Join Classroom Modal -->
   <div
     class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
     *ngIf="showJoinPrompt"
   >
-    <div class="bg-white rounded-lg p-6 w-96">
-      <h3 class="text-lg font-semibold mb-4">Join Classroom</h3>
+    <div class="bg-white rounded-xl p-6 w-[400px] shadow-lg">
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-xl font-bold text-black">Join Classroom</h3>
+        <button class="text-gray-500 hover:text-black" (click)="cancelJoin()">
+          ✖
+        </button>
+      </div>
+
+      <!-- Modal Description -->
+      <p class="text-gray-500 text-sm mb-4">
+        Enter the classroom code provided by your teacher.
+      </p>
+
+      <!-- Input Field -->
+      <label for="classroomCode" class="text-black font-medium text-sm"
+        >Classroom Code</label
+      >
       <input
+        id="classroomCode"
         type="text"
         [(ngModel)]="classroomCode"
         placeholder="Enter classroom code"
-        class="w-full p-2 border rounded mb-4"
+        class="w-full border rounded-lg px-3 py-2 text-gray-700 mt-2 focus:outline-none focus:ring-1 focus:ring-black"
       />
-      <div class="flex justify-around">
+
+      <!-- Modal Buttons -->
+      <div class="flex justify-end gap-3 mt-5">
         <button
-          class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
-          (click)="joinClassroom()"
-        >
-          Submit
-        </button>
-        <button
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
+          class="border border-gray-400 text-black px-4 py-2 rounded-md hover:bg-gray-100 transition"
           (click)="cancelJoin()"
         >
           Cancel
+        </button>
+        <button
+          class="bg-black text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+          (click)="joinClassroom()"
+        >
+          Join
         </button>
       </div>
     </div>

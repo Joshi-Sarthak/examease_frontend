@@ -1,94 +1,175 @@
-<div class="builder-container">
-    <header class="header">
-      <button class="icon-button" (click)="goBack()">&larr; Back</button>
-      <h1>{{ isEditTest ? 'Edit Test' : 'Create Test' }}</h1>
-      <button class="icon-button" (click)="saveTest()">&#10003; Save</button>
-    </header>
-  
-    <div class="main-content">
-      <nav class="question-navigation">
-        <ul>
-          <li *ngFor="let question of questions; let i = index" 
-              [class.selected]="i === currentQuestionIndex" 
-              (click)="navigateToQuestion(i)">
-            Question {{ question.questionNumber }}
+<div class="builder-container p-6 max-w-4xl mx-auto">
+  <header class="flex justify-between items-center border-b pb-4 mb-6">
+    <button
+      class="text-gray-700 hover:text-black transition"
+      (click)="goBack()"
+    >
+      &larr; Back
+    </button>
+    <h1 class="text-2xl font-semibold">
+      {{ isEditTest ? "Edit Test" : "Create Test" }}
+    </h1>
+    <button
+      class="bg-black text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+      (click)="saveTest()"
+    >
+      &#10003; Save
+    </button>
+  </header>
+
+  <div class="flex gap-6">
+    <nav class="w-1/4 bg-gray-100 p-4 rounded-lg shadow-md">
+      <ul class="space-y-2">
+        <li
+          *ngFor="let question of questions; let i = index"
+          [class.selected]="i === currentQuestionIndex"
+          (click)="navigateToQuestion(i)"
+          class="cursor-pointer p-2 rounded-md hover:bg-gray-200"
+        >
+          Question {{ question.questionNumber }}
+        </li>
+      </ul>
+      <button
+        class="bg-black text-white px-4 py-2 rounded-md mt-4 w-full hover:opacity-80 transition"
+        (click)="addNewQuestion()"
+      >
+        ➕ Add Question
+      </button>
+    </nav>
+
+    <div class="flex-1 bg-white p-6 rounded-lg shadow-md">
+      <div class="cropper-container" *ngIf="imageChangedEvent">
+        <image-cropper
+          [imageBase64]="imageChangedEvent"
+          (imageCropped)="onImageCropped($event)"
+          [maintainAspectRatio]="false"
+        >
+        </image-cropper>
+        <button
+          class="text-red-500 hover:text-red-700 transition mt-2"
+          (click)="removeImage()"
+        >
+          Remove Image
+        </button>
+      </div>
+
+      <div class="select-image-container" *ngIf="!imageChangedEvent">
+        <button
+          class="bg-black text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+          (click)="openFilePicker()"
+        >
+          Select Image for Cropping
+        </button>
+      </div>
+
+      <div class="mt-4">
+        <textarea
+          class="w-full p-3 border rounded-md"
+          [(ngModel)]="currentQuestion.questionText"
+          placeholder="Enter question text"
+        ></textarea>
+      </div>
+
+      <div class="flex gap-3 mt-4">
+        <button
+          class="bg-gray-700 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+          (click)="extractTextFromSelectedArea('question', -1)"
+        >
+          Extract Text from Image
+        </button>
+        <button
+          class="bg-gray-700 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+          (click)="onSelectCropImage('question')"
+        >
+          {{ currentQuestion.questionImage ? "Delete Image" : "Crop Image" }}
+        </button>
+      </div>
+
+      <div class="mt-4" *ngIf="currentQuestion.questionImage">
+        <img
+          class="rounded-md shadow-md"
+          [src]="currentQuestion.questionImage"
+          alt="Question Cropped Image"
+        />
+      </div>
+
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-3">Options</h3>
+        <ul class="space-y-4">
+          <li
+            *ngFor="let option of currentQuestion.options; let i = index"
+            class="bg-gray-100 p-4 rounded-md"
+          >
+            <div class="flex items-center gap-4">
+              <input
+                class="w-full p-2 border rounded-md"
+                [(ngModel)]="option.optionText"
+                placeholder="Enter option text"
+              />
+              <button
+                class="text-red-500 hover:text-red-700 transition"
+                (click)="removeOption(i)"
+              >
+                🗑
+              </button>
+            </div>
+            <div class="flex gap-3 mt-2">
+              <button
+                class="bg-gray-700 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+                (click)="extractTextFromSelectedArea('option', i)"
+              >
+                Extract Text
+              </button>
+              <button
+                class="bg-gray-700 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+                (click)="onSelectCropImage('option', i)"
+              >
+                {{ option.image ? "Delete Image" : "Crop Image" }}
+              </button>
+            </div>
+            <div class="mt-2" *ngIf="option.image">
+              <img
+                class="rounded-md shadow-md"
+                [src]="option.image"
+                alt="Option Cropped Image"
+              />
+            </div>
           </li>
         </ul>
-        <button (click)="addNewQuestion()">Add New Question</button>
-      </nav>
-  
-      <div class="content">
-        
-        <div class="cropper-container" *ngIf="imageChangedEvent">
-          <image-cropper 
-            [imageBase64]="imageChangedEvent" 
-            (imageCropped)="onImageCropped($event)"
-            [maintainAspectRatio]="false">
-          </image-cropper>
-          <button class="remove-btn" (click)="removeImage()">Remove Image</button>
-        </div>
-        
-        <div class="select-image-container" *ngIf="!imageChangedEvent">
-          <button (click)="openFilePicker()">Select Image for Cropping</button>
-        </div>
-  
-        <div class="field-container">
-          <textarea [(ngModel)]="currentQuestion.questionText" placeholder="Enter question text"></textarea>
-        </div>
-  
-        <div class="controls">
-          <button (click)="extractTextFromSelectedArea('question', -1)">
-            Extract Text from Image
-          </button>
-          <button (click)="onSelectCropImage('question')">
-            {{ currentQuestion.questionImage ? 'Delete Image' : 'Crop Image' }}
-          </button>
-        </div>
-  
-        <div class="image-preview" *ngIf="currentQuestion.questionImage">
-          <img [src]="currentQuestion.questionImage" alt="Question Cropped Image" />
-        </div>
-  
-        <div class="options-section">
-          <h3>Options</h3>
-          <ul>
-            <li *ngFor="let option of currentQuestion.options; let i = index">
-              <div class="option-item">
-                <div class="field-container">
-                  <input [(ngModel)]="option.optionText" placeholder="Enter option text" />
-                </div>
-  
-                <div class="controls">
-                  <button (click)="extractTextFromSelectedArea('option', i)">
-                    Extract Text from Image
-                  </button>
-                  <button (click)="onSelectCropImage('option', i)">
-                    {{ option.image ? 'Delete Image' : 'Crop Image' }}
-                  </button>
-                  <button class="remove-btn" (click)="removeOption(i)">🗑 Remove</button>
-                </div>
-  
-                <div class="image-preview" *ngIf="option.image">
-                  <img [src]="option.image" alt="Option Cropped Image" />
-                </div>
-              </div>
-            </li>
-          </ul>
-  
-          <button (click)="addOption()">Add Option</button>
-  
-          <div class="correct-option-selector">
-            <label for="correctOption">Select Correct Option:</label>
-            <select id="correctOption" [(ngModel)]="this.currentQuestion.correctOptionIndex">
-              <option *ngFor="let option of currentQuestion.options; let i = index" [ngValue]="i">
-                {{ i | charCode }}
-              </option>
-            </select>
-          </div>
+
+        <button
+          class="bg-black text-white px-4 py-2 rounded-md mt-4 hover:opacity-80 transition"
+          (click)="addOption()"
+        >
+          ➕ Add Option
+        </button>
+
+        <div class="mt-6">
+          <label for="correctOption" class="block text-sm font-medium"
+            >Select Correct Option:</label
+          >
+          <select
+            id="correctOption"
+            class="w-full p-2 border rounded-md mt-2"
+            [(ngModel)]="currentQuestion.correctOptionIndex"
+          >
+            <option
+              *ngFor="let option of currentQuestion.options; let i = index"
+              [ngValue]="i"
+            >
+              {{ i | charCode }}
+            </option>
+          </select>
         </div>
       </div>
     </div>
-  
-    <input id="fileInput" type="file" (change)="onFileSelected($event)" accept="image/*" hidden />
   </div>
-  
+
+  <input
+    id="fileInput"
+    type="file"
+    (change)="onFileSelected($event)"
+    accept="image/*"
+    hidden
+  />
+</div>

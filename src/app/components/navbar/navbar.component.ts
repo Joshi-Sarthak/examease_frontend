@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { ClassroomService } from '../../../services/classroom.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,6 +12,11 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
+  constructor(
+    private classroomService: ClassroomService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
   menuOpen: boolean = false;  // ✅ Define menu state
 
   toggleMenu() {  
@@ -18,6 +25,8 @@ export class NavbarComponent {
 
   logout() {
     console.log("Logging out...");
-    // ✅ Add real logout logic here
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
+//944857
