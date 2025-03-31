@@ -8,7 +8,12 @@ export interface TestData {
   startFrom: Date;
   deadlineTime: Date;
   testTime: number;
-  result: number; //replace with result object
+  result: Result[]
   classroomId?: string;
+}
+
+export interface Result {
+  studentId: string;
+  result: number;
 }
 

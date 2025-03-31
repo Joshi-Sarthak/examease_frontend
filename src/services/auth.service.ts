@@ -25,14 +25,28 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<UserData> {
-    return this.http.post<UserData>(`${this.apiUrl}/login`, { email, password }).pipe(
-      map((user) => {
+    return this.http.post<{ message: string; user: any }>(`${this.apiUrl}/login`, { email, password }).pipe(
+      map((response) => {
+        const userResponse = response.user;
+  
+        const user: UserData = {
+          userId: userResponse._id,
+          fullName: userResponse.fullName,
+          username: userResponse.username,
+          email: userResponse.email,
+          password: userResponse.password,
+        };
+  
         localStorage.setItem('currentUser', JSON.stringify(user));
+  
         this.currentUserSubject.next(user);
+        console.log('User logged in:', user);
+  
         return user;
       })
     );
   }
+   
 
   logout(): void {
     localStorage.removeItem('currentUser');

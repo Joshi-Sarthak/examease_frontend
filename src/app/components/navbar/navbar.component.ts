@@ -1,23 +1,34 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { log } from 'console';
+import { AuthService } from '../../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule, 
+    RouterModule
+  ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-  menuOpen: boolean = false;  // ✅ Define menu state
+  menuOpen: boolean = false;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+  ) {}
 
   toggleMenu() {  
-    this.menuOpen = !this.menuOpen;  // ✅ Toggle state
+    this.menuOpen = !this.menuOpen;
   }
 
   logout() {
-    console.log("Logging out...");
-    // ✅ Add real logout logic here
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

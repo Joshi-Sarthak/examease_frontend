@@ -47,7 +47,7 @@ export class TestDetailsComponent {
 
     console.log('[TestDetails] State data from router:', stateData);
 
-    const existingTest = this.testService.getTest(this.testId, this.classroomId);
+    const existingTest = this.testService.getTest();
     console.log('[TestDetails] Existing test from TestService:', existingTest);
 
     if (existingTest) {

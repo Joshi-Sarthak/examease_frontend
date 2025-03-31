@@ -51,7 +51,7 @@ export class QuestionBuilderComponent implements OnInit {
     if (testIdParam) {
       this.testId = testIdParam;
       this.isEditTest = true;
-      const existingTest = this.testService.getTest(this.testId, this.classroomId);
+      const existingTest = this.testService.getTest();
       if (existingTest?.questions?.length) {
         this.questions = existingTest.questions;
       }

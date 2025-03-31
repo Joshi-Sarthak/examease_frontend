@@ -73,7 +73,7 @@ export class ClassroomListComponent {
       classroomId, 
       this.classroomName, 
       this.user.userId, 
-      this.user.username
+      this.user.fullName,
     );
     this.loadUserClassrooms();
 
@@ -100,7 +100,6 @@ export class ClassroomListComponent {
   }
 
   openClassroom(classroom: ClassroomData): void {
-    console.log('Classroom clicked:', classroom);
     this.classroomService.setClassroom(classroom);
     this.router.navigate(['/test-list', classroom.classroomId]);
   }

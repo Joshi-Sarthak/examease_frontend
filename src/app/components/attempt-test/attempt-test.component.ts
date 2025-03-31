@@ -1,11 +1,9 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TestData } from '../../../models/test.model';
+import { TestData, Result } from '../../../models/test.model';
 import { TestService } from '../../../services/test.service';
 import { CharCodePipe } from '../pipes/char-code.pipe';
-import { ResultService } from '../../../services/result.service';
-import { TestResult } from '../../../models/test-result.model';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -19,8 +17,9 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private testService = inject(TestService);
-  user: any = null;
+  private authService = inject(AuthService);
 
+  user: any = null;
   classroomId: string = '';
   testId: string = '';
   testData!: TestData;
@@ -29,22 +28,18 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
   remainingTimeInSeconds = 0;
   timer: any;
 
-  constructor(
-    private authService: AuthService,
-  ) {}
-
   ngOnInit(): void {
     this.authService.getUser().subscribe((user) => {
       this.user = user;
       if (!this.user) {
         this.router.navigate(['/login']);
-      } 
+      }
     });
 
     this.classroomId = this.route.snapshot.paramMap.get('classroomId') || '';
     this.testId = this.route.snapshot.paramMap.get('testId') || '';
 
-    const test = this.testService.getTest(this.testId, this.classroomId);
+    const test = this.testService.getTestById(this.testId);
     if (!test) {
       alert('Test not found!');
       this.router.navigate(['/test-list', this.classroomId]);
@@ -57,7 +52,7 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
     this.startTimer();
   }
 
-  startTimer() {
+  startTimer(): void {
     this.timer = setInterval(() => {
       if (this.remainingTimeInSeconds > 0) {
         this.remainingTimeInSeconds--;
@@ -74,11 +69,11 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
-  selectOption(optionIndex: number) {
+  selectOption(optionIndex: number): void {
     this.selectedOptions[this.currentQuestionIndex] = optionIndex;
   }
 
-  navigateToQuestion(index: number) {
+  navigateToQuestion(index: number): void {
     if (index >= 0 && index < this.testData.questions.length) {
       this.currentQuestionIndex = index;
     }
@@ -90,11 +85,9 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
     return 'unanswered';
   }
 
-  private resultService = inject(ResultService);
-
-  submitTest(timeUp = false) {
+  submitTest(timeUp = false): void {
     if (!timeUp && !confirm('Are you sure you want to submit the test?')) return;
-
+  
     let correctAnswers = 0;
     this.testData.questions.forEach((question, i) => {
       console.log('Selected Option:', this.selectedOptions[i]);
@@ -103,21 +96,18 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
         correctAnswers++;
       }
     });
-
-    const result: TestResult = {
+  
+    const result: Result = {
       studentId: this.user.userId || '',
-      studentName: this.user.username || 'Unknown Student',
-      score: correctAnswers,
-      total: this.testData.questions.length,
-      percentage: Math.min(100, Math.round((correctAnswers / this.testData.questions.length) * 100)), 
-      testId: this.testId,
+      result: correctAnswers
     };
-
-    this.resultService.saveResult(result);
-
-    alert(`Test Submitted! Your score is ${result.percentage}%`);
+  
+    this.testService.saveResult(this.testId, result);
+  
+    alert(`Test Submitted! You got ${correctAnswers} out of ${this.testData.questions.length} correct.`);
     this.router.navigate(['/test-list', this.classroomId]);
   }
+  
 
   ngOnDestroy(): void {
     clearInterval(this.timer);

@@ -4,19 +4,14 @@ import { CommonModule } from '@angular/common';
 import { ClassroomService } from '../../../services/classroom.service';
 import { TestService } from '../../../services/test.service';
 import { AuthService } from '../../../services/auth.service';
-import { ResultService } from '../../../services/result.service';
-import { TestData } from '../../../models/test.model';
-import { TestResult } from '../../../models/test-result.model';
+import { TestData, Result } from '../../../models/test.model';
 import { ClassroomData } from '../../../models/classroom.model';
-import { stat } from 'node:fs';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-test-list',
   standalone: true,
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
   templateUrl: './test-list.component.html',
   styleUrls: ['./test-list.component.css'],
 })
@@ -25,7 +20,7 @@ export class TestListComponent {
   classroom: ClassroomData | null = null;
   tests: TestData[] = [];
   userRole: 'teacher' | 'student' | null = null;
-  studentResults: { [testId: string]: TestResult | null } = {};
+  studentResults: { [testId: string]: Result | null } = {};
   dropdownOpen: { [key: string]: boolean } = {};
   currentUserId: string = '';
   showNotFoundError: boolean = false;
@@ -36,7 +31,6 @@ export class TestListComponent {
     private router: Router,
     private classroomService: ClassroomService,
     private testService: TestService,
-    private resultService: ResultService,
     private authService: AuthService
   ) {}
 
@@ -60,10 +54,10 @@ export class TestListComponent {
     } else {
       this.loadUserData();
     }
-    this.routerSubscription = this.router.events.subscribe(event => {
+
+    this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        if (!event.url.includes('/test-list')) {
-          console.log('Navigating away from test-list, clearing classroom data');
+        if (!event.url.includes('/test-list/' + this.classroomId) && !event.url.includes('/teacher-result')) {
           this.classroomService.setClassroom(null);
         }
       }
@@ -82,13 +76,14 @@ export class TestListComponent {
   }
 
   private loadData(userId: string): void {
-    this.tests = this.testService.getTests(this.classroom!.classroomId);
+    this.tests = this.testService.getTestsForClassroom(this.classroom!.classroomId);
     this.userRole = this.classroom?.teacherId === userId ? 'teacher' : 'student';
 
     if (this.userRole === 'student') {
       this.tests.forEach((test) => {
-        const result = this.resultService.getResults(test.testId).find(r => r.studentId === userId);
-        this.studentResults[test.testId] = result || null;
+        const resultsArray = Array.isArray(test.result) ? test.result : [];
+        const result = resultsArray.filter((r) => r.studentId === userId);
+        this.studentResults[test.testId] = result.length > 0 ? result[0] : null;
       });
     }
   }
@@ -101,11 +96,9 @@ export class TestListComponent {
     const now = new Date().getTime();
     const start = new Date(startTime).getTime();
     const deadline = new Date(deadlineTime).getTime();
-    
     return now >= start && now <= deadline;
   }
-  
-  
+
   navigateToQuestionBuilder(): void {
     if (this.userRole === 'teacher') {
       this.router.navigate(['/question-builder', this.classroom!.classroomId]);
@@ -119,19 +112,21 @@ export class TestListComponent {
   deleteTest(testId: string): void {
     if (this.userRole === 'teacher') {
       this.testService.deleteTest(this.classroom!.classroomId, testId);
-      this.tests = this.testService.getTests(this.classroom!.classroomId);
+      this.tests = this.tests.filter(test => test.testId !== testId);
     }
+  }  
+
+  editTest(test: TestData): void {
+    this.testService.setTest(test);
+    this.router.navigate(['/question-builder', this.classroom!.classroomId, test.testId]);
   }
 
-  editTest(testId: string): void {
-    this.router.navigate(['/question-builder', this.classroom!.classroomId, testId]);
-  }
-
-  viewResults(testId: string): void {
+  viewResults(test: TestData): void {
     if (this.userRole === 'teacher') {
-      console.log('View results clicked', this.classroom!.classroomId);
-      this.router.navigate(['/teacher-result', testId], {
-        state: { classroom: this.classroom }
+      this.classroomService.setClassroom(this.classroom!);
+      this.testService.setTest(test);
+      this.router.navigate(['/teacher-result', test.testId], {
+        queryParams: { classroomId: this.classroom!.classroomId },
       });
     }
   }
