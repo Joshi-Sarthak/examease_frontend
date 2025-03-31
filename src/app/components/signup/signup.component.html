@@ -5,10 +5,18 @@
 
   <label for="username">Username:</label>
   <input
-    type="text"
+    type="text" 
     id="username"
     [(ngModel)]="username"
     placeholder="Enter username"
+  />
+
+  <label for="fullName">Username:</label>
+  <input
+    type="text"
+    id="fullName"
+    [(ngModel)]="fullName"
+    placeholder="Enter your full name"
   />
 
   <label for="email">Email:</label>
@@ -35,7 +43,9 @@
     placeholder="Confirm password"
   />
 
+  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
   <button (click)="signup()">Signup</button>
 
-  <p>Already have an account? <a routerLink="/login">Login</a></p>
+  <p>Already have an account? <a routerLink="/">Login</a></p>
 </div>

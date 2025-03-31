@@ -4,16 +4,20 @@ import { AuthService } from '../../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-@Component({ 
+@Component({
+  imports: [
+    FormsModule,
+    CommonModule
+  ],
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
 })
 export class SignupComponent {
   username: string = '';
   email: string = '';
+  fullName: string = '';
   password: string = '';
   confirmPassword: string = '';
   errorMessage: string = '';
@@ -33,18 +37,14 @@ export class SignupComponent {
       return;
     }
 
-    if (this.authService.isUsernameTaken(this.username)) {
-      this.errorMessage = 'Username is already taken!';
-      return;
-    }
-
-    if (this.authService.isEmailTaken(this.email)) {
-      this.errorMessage = 'Email is already registered!';
-      return;
-    }
-
-    this.authService.register(this.username, this.email, this.password);
-    alert('Signup successful! Please login.');
-    this.router.navigate(['/login']);
+    this.authService.signup(this.username, this.fullName, this.email, this.password).subscribe({
+      next: () => {
+        alert('Signup successful! Please login.');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.errorMessage = err.error.error || 'Signup failed';
+      },
+    });
   }
 }

@@ -12,10 +12,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { AppComponent } from './app/app.component';
 import { OcrService } from './services/ocr.service';
 import { ImageCropperComponent } from 'ngx-image-cropper';
+import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app/app.routes';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideHttpClient(),
     provideRouter(routes),
     provideAnimations(),
     importProvidersFrom(

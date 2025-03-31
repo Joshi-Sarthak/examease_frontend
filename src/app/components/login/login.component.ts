@@ -1,31 +1,42 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    FormsModule,
+    RouterModule,
+    CommonModule
+  ],
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-  username: string = '';
+  email: string = '';
   password: string = '';
+  errorMessage: string = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   login(): void {
-    if (!this.username || !this.password) {
-      alert('Please enter your username and password.');
+    this.errorMessage = '';
+
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Please enter your email and password.';
       return;
     }
 
-    const success = this.authService.login(this.username, this.password);
-    if (success) {
-      this.router.navigate(['/classroom-list']);
-    }
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        this.router.navigate(['/classroom-list']);
+      },
+      error: (err) => {
+        this.errorMessage = err.error.error || 'Login failed';
+      },
+    });
   }
 }
