@@ -21,6 +21,7 @@ export class TestDetailsComponent {
   classroomId: string = '';
   testId: string = '';
   questions: QuestionData[] = [];
+  existingTest: TestData | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -45,14 +46,11 @@ export class TestDetailsComponent {
     const navigation = this.router.getCurrentNavigation();
     const stateData = navigation?.extras.state as { questions?: QuestionData[] } | undefined;
 
-    console.log('[TestDetails] State data from router:', stateData);
+    this.existingTest = this.testService.getTest();
 
-    const existingTest = this.testService.getTest();
-    console.log('[TestDetails] Existing test from TestService:', existingTest);
-
-    if (existingTest) {
-      this.testForm.patchValue(existingTest);
-      this.questions = existingTest.questions || [];
+    if (this.existingTest) {
+      this.testForm.patchValue(this.existingTest);
+      this.questions = this.existingTest.questions || [];
       console.log('[TestDetails] Loaded questions from TestService:', this.questions);
     }
 
@@ -75,8 +73,8 @@ export class TestDetailsComponent {
       testId: this.testId || new Date().getTime().toString(),
       questions: this.questions,
       postedAt: new Date(),
-      result: 0,
       classroomId: this.classroomId,
+      result: this.existingTest?.result || [],
     };
 
     console.log('[TestDetails] Saving test to TestService:', test);

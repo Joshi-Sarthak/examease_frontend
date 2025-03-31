@@ -16,4 +16,3 @@ export interface Result {
   studentId: string;
   result: number;
 }
-

@@ -44,56 +44,60 @@ export class TeacherResultComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.routerSubscription = this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        if (!event.url.includes('/teacher-result')) {
-          // this.classroomService.setClassroom(null);
-        }
-      }
-    });
-
+    this.classroom = this.classroomService.getClassroom();
+    
     this.authService.getUser().subscribe((user) => {
       if (!user) {
         this.router.navigate(['/login']);
       } else if (this.classroom?.teacherId !== user.userId) {
-        console.log('User is not the teacher of this classroom', this.classroom?.teacherId, user.userId);
-        // this.router.navigate(['/classroom-list']);
+        this.router.navigate(['/classroom-list']);
       }
     });
-
-    console.log('TeacherResultComponent initialized');
-
-    this.classroom = this.classroomService.getClassroom();
+    
     if (!this.classroom) {
       this.route.paramMap.subscribe((params) => {
         this.classroomId = params.get('classroomId') || '';
-
-        if (this.classroomId) {
+        
+        if (!this.classroom) {
           this.classroom = this.classroomService.getClassroomById(this.classroomId);
         }
-
+        
         // if still classroom is null, show Error 404 classroom Not found
+        if (!this.classroom) {
+          alert('Error 404! Classroom not found!');
+        }
       });
     }
-
+    
     this.test = this.testService.getTest();
-    console.log('Test:', this.test);
     if (!this.test) {
       this.route.paramMap.subscribe((params) => {
         this.testId = this.route.snapshot.paramMap.get('testId')!;
-
-        if (this.testId) {
+        
+        if (!this.test) {
           this.test = this.testService.getTestById(this.testId);
         }
-
+        
         // if still classroom is null, show Error 404 classroom Not found
+        if (!this.test) {
+          alert('Error 404! Test not found!');
+        }
       });
     }
-
-    this.testId = this.route.snapshot.paramMap.get('testId')!;
+    
     this.fetchTestResults();
+    this.routerSubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        if (!(event.url.includes('/teacher-result') && event.url.includes(this.testId) && event.url.includes(this.classroomId))) {
+          this.testService.setTest(null);
+          if (!(event.url.includes('/test-list') && event.url.includes(this.classroomId))) {
+            // this.classroomService.setClassroom(null);
+          }
+        }
+      }
+    });
   }
-
+  
   fetchTestResults() {
     this.results = this.test?.result || [];
     this.findStudentsNotTested();
@@ -143,7 +147,6 @@ export class TeacherResultComponent implements OnInit {
 
   private findStudentsNotTested() {
     this.studentsInClassroom = this.classroom?.students || []; 
-    console.log('Students in classroom:', this.studentsInClassroom);
     const studentsWithResults = this.results.map(result => result.studentId);
     this.studentsNotTested = this.studentsInClassroom.filter(studentId => !studentsWithResults.includes(studentId));
   }

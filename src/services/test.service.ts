@@ -55,7 +55,7 @@ export class TestService {
     }
   }
 
-  setTest(test: TestData): void {
+  setTest(test: TestData | null): void {
     if (!this.isBrowser) return;
     localStorage.setItem('selected_test', JSON.stringify(test));
   }

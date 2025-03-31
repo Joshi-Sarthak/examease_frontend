@@ -18,9 +18,7 @@ export class ClassroomService {
 
   //keep it as it is
   getClassroom(): ClassroomData | null {
-    console.log('Before', JSON.parse(localStorage.getItem(this.selectedClassroomKey)!));
     const data = localStorage.getItem(this.selectedClassroomKey);
-    console.log('After:', JSON.parse(data!));
     return data ? JSON.parse(data) : null;
   }  
 
@@ -52,11 +50,9 @@ export class ClassroomService {
   }
 
   getUserClassrooms(userId: string): ClassroomData[] {
-    console.log('Getting classrooms for user:', userId);
   
     const data = localStorage.getItem(this.classroomsKey);
     if (!data) {
-      console.log('No classrooms found in localStorage.');
       return [];
     }
   
@@ -68,7 +64,6 @@ export class ClassroomService {
         (Array.isArray(classroom.students) && classroom.students.includes(userId))
     );
   
-    console.log('Filtered classrooms:', filteredClassrooms);
     return filteredClassrooms;
   }
   
@@ -88,7 +83,6 @@ export class ClassroomService {
     });
 
     localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
-    console.log(JSON.parse(localStorage.getItem('classrooms')!));
   }
 
   joinClassroom(classroomCode: string, userId: string): ClassroomData | undefined {
@@ -105,8 +99,6 @@ export class ClassroomService {
         localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
       }
     }
-
-    console.log('Classroom after joining:', classroom);
   
     return classroom;
   }  

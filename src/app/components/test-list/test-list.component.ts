@@ -41,7 +41,7 @@ export class TestListComponent {
       this.route.paramMap.subscribe((params) => {
         this.classroomId = params.get('classroomId') || '';
 
-        if (this.classroomId) {
+        if (!this.classroom) {
           this.classroom = this.classroomService.getClassroomById(this.classroomId);
         }
 
@@ -57,7 +57,12 @@ export class TestListComponent {
 
     this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
-        if (!event.url.includes('/test-list/' + this.classroomId) && !event.url.includes('/teacher-result')) {
+        if (
+          !event.url.includes('/test-list/' + this.classroomId) && 
+          !event.url.includes('/teacher-result') && 
+          !event.url.includes('/attempt-test') &&
+          !event.url.includes('/question-builder')
+        ) {
           this.classroomService.setClassroom(null);
         }
       }
@@ -118,6 +123,7 @@ export class TestListComponent {
 
   editTest(test: TestData): void {
     this.testService.setTest(test);
+    console.log('classroom before', this.classroom);
     this.router.navigate(['/question-builder', this.classroom!.classroomId, test.testId]);
   }
 
