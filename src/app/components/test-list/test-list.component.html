@@ -46,7 +46,7 @@
         <div *ngIf="userRole === 'teacher'" class="flex gap-3 mt-3">
           <button
             class="bg-gray-800 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
-            (click)="editTest(test.testId)"
+            (click)="editTest(test)"
           >
             Edit
           </button>
@@ -58,7 +58,7 @@
           </button>
           <button
             class="bg-gray-800 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
-            (click)="viewResults(test.testId)"
+            (click)="viewResults(test)"
           >
             Results
           </button>
@@ -80,14 +80,14 @@
             *ngIf="studentResults[test.testId]"
             class="bg-gray-200 p-3 rounded-md mt-3"
           >
-            <p class="text-sm text-gray-700">
-              <strong>Score:</strong>
-              {{ studentResults[test.testId]?.score }} /
-              {{ studentResults[test.testId]?.total }}
+            <p class="text-sm text-green-700">
+              <strong>✅ Score:</strong>
+              {{ studentResults[test.testId]?.result }} /
+              {{ test.questions.length }}
             </p>
-            <p class="text-sm text-gray-700">
-              <strong>Percentage:</strong>
-              {{ studentResults[test.testId]?.percentage }}%
+            <p class="text-sm text-green-700">
+              <strong>📈 Percentage:</strong>
+              {{ (studentResults[test.testId]?.result! / test.questions.length) * 100 }}%
             </p>
           </div>
         </div>

@@ -31,20 +31,15 @@
         <th>Score</th>
         <th>Total</th>
         <th>Percentage</th>
-        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let result of results">
-        <td>{{ result.studentName }}</td>
-        <td>{{ result.score }}</td>
-        <td>{{ result.total }}</td>
-        <td>{{ (result.score / result.total) * 100 | number: '1.2-2' }}%</td>
-        <td>
-          <button (click)="viewStudentResult(result.studentId)" class="review-button">
-            Review
-          </button>
-        </td>
+        <td>{{ result.studentId }}</td>
+        <!-- <td>{{ result.studentName }}</td> -->
+        <td>{{ result.result }}</td>
+        <td>{{ test!.questions.length }}</td>
+        <td>{{ (result.result / test!.questions.length) * 100 | number: '1.2-2' }}%</td>
       </tr>
     </tbody>
   </table>
