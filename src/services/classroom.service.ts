@@ -6,125 +6,107 @@ import { ClassroomData } from '../models/classroom.model';
 })
 export class ClassroomService {
   private classroomsKey = 'classrooms';
-  private classroomStudentsKey = 'classroomStudents';
+  private selectedClassroomKey = 'selectedClassroom';
 
   constructor() {}
 
-  private getFromLocalStorage(key: string): any {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : {};
+  setClassroom(classroom: ClassroomData | null): void {
+    localStorage.setItem(this.selectedClassroomKey, JSON.stringify(classroom));
   }
 
-  private saveToLocalStorage(key: string, data: any): void {
-    localStorage.setItem(key, JSON.stringify(data));
+  getClassroom(): ClassroomData | null {
+    const data = localStorage.getItem(this.selectedClassroomKey);
+    return data ? JSON.parse(data) : null;
   }
 
-  private getAllClassrooms(): ClassroomData[] {
-    return this.getFromLocalStorage(this.classroomsKey) || [];
-  }
-
-  private saveClassrooms(classrooms: ClassroomData[]): void {
-    this.saveToLocalStorage(this.classroomsKey, classrooms);
-  }
-
-  private getClassroomStudents(): Record<string, string[]> {
-    return this.getFromLocalStorage(this.classroomStudentsKey);
-  }
-
-  private saveClassroomStudents(students: Record<string, string[]>): void {
-    this.saveToLocalStorage(this.classroomStudentsKey, students);
-  }
-
-  private getStudentClassrooms(userId: string): ClassroomData[] {
-    const studentMap = this.getClassroomStudents();
-    const classroomIds = Object.keys(studentMap).filter(classroomId =>
-      studentMap[classroomId].includes(userId)
-    );
-
-    return this.getAllClassrooms().filter(classroom =>
-      classroomIds.includes(classroom.classroomId)
-    );
+  getClassroomById(classroomId: string): ClassroomData | null {
+    const data = localStorage.getItem(this.classroomsKey);
+    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
+    
+    return classrooms.find((c) => c.classroomId === classroomId) || null;
   }
 
   getUserClassrooms(userId: string): ClassroomData[] {
-    const classrooms = this.getAllClassrooms();
-    const studentClassrooms = this.getStudentClassrooms(userId);
-
-    return classrooms.filter((classroom) => classroom.teacherId === userId)
-      .concat(studentClassrooms);
+    const data = localStorage.getItem(this.classroomsKey);
+    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
+  
+    return classrooms.filter(
+      (classroom) =>
+        classroom.teacherId === userId || (Array.isArray(classroom.students) && classroom.students.includes(userId))
+    );
   }
+  
+  createClassroom(classroomId: string, classroomName: string, teacherId: string, teacherName: string): void {
+    const data = localStorage.getItem(this.classroomsKey);
+    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
 
-  createClassroom(classroomId: string, classroomName: string, userId: string, username: string): void {
-    const classrooms = this.getAllClassrooms();
-    const newClassroom: ClassroomData = {
+    classrooms.push({
       classroomId,
       classroomName,
       classroomCode: classroomId.slice(-6),
       createdAt: new Date(),
-      teacherId: userId,
-      teacherName: username,
-    };
+      teacherId,
+      teacherName,
+      students: [],
+    });
 
-    classrooms.push(newClassroom);
-    this.saveClassrooms(classrooms);
+    localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
   }
 
   joinClassroom(classroomCode: string, userId: string): ClassroomData | undefined {
-    const classrooms = this.getAllClassrooms();
+    const data = localStorage.getItem(this.classroomsKey);
+    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
+  
     const classroom = classrooms.find((c) => c.classroomCode === classroomCode);
-
+  
     if (classroom) {
-      const students = this.getClassroomStudents();
-      const classroomId = classroom.classroomId;
-
-      if (!students[classroomId]) {
-        students[classroomId] = [];
-      }
-
-      if (!students[classroomId].includes(userId)) {
-        students[classroomId].push(userId);
-        this.saveClassroomStudents(students);
+      classroom.students = classroom.students ?? [];
+  
+      if (!classroom.students.includes(userId)) {
+        classroom.students.push(userId);
+        localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
       }
     }
-
+  
     return classroom;
-  }
+  }  
 
   getClassroomByCode(classroomCode: string): ClassroomData | undefined {
-    return this.getAllClassrooms().find((c) => c.classroomCode === classroomCode);
-  }
+    const data = localStorage.getItem(this.classroomsKey);
+    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
 
-  getClassroomById(classroomId: string): ClassroomData | undefined {
-    return this.getAllClassrooms().find((c) => c.classroomId === classroomId);
+    return classrooms.find((c) => c.classroomCode === classroomCode);
   }
 
   getStudentsInClassroom(classroomId: string): string[] {
-    const students = this.getClassroomStudents();
-    return students[classroomId] || [];
+    const data = localStorage.getItem(this.classroomsKey);
+    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
+
+    const classroom = classrooms.find((c) => c.classroomId === classroomId);
+    return classroom ? classroom.students : [];
   }
 
-  deleteClassroom(classroomId: string): boolean {
-    const classrooms = this.getAllClassrooms();
-    const index = classrooms.findIndex((c) => c.classroomId === classroomId);
+  leaveClassroom(classroomId: string, userId: string): boolean {
+    const data = localStorage.getItem(this.classroomsKey);
+    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
 
-    if (index !== -1) {
-      classrooms.splice(index, 1);
-      this.saveClassrooms(classrooms);
-
-      const students = this.getClassroomStudents();
-      delete students[classroomId];
-      this.saveClassroomStudents(students);
-
+    const classroom = classrooms.find((c) => c.classroomId === classroomId);
+    if (classroom) {
+      classroom.students = classroom.students.filter((studentId) => studentId !== userId);
+      localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
       return true;
     }
     return false;
   }
 
-  leaveClassroom(classroomId: string, userId: string): boolean {
-    const students = this.getClassroomStudents();
-    if (students[classroomId]) {
-      students[classroomId] = students[classroomId].filter(studentId => studentId !== userId);
-      this.saveClassroomStudents(students);
+  deleteClassroom(classroomId: string): boolean {
+    const data = localStorage.getItem(this.classroomsKey);
+    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
+
+    const index = classrooms.findIndex((c) => c.classroomId === classroomId);
+    if (index !== -1) {
+      classrooms.splice(index, 1);
+      localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
       return true;
     }
     return false;

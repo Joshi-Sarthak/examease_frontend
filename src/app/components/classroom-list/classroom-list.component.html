@@ -13,7 +13,7 @@
     <div
       class="card"
       *ngFor="let classroom of classrooms"
-      (click)="openClassroom(classroom.classroomId)"
+      (click)="openClassroom(classroom)"
     >
       <div class="card-header">
         <h3 class="card-title">{{ classroom.classroomName }}</h3>

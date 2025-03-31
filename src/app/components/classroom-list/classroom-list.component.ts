@@ -99,8 +99,10 @@ export class ClassroomListComponent {
     }
   }
 
-  openClassroom(classroomId: string): void {
-    this.router.navigate(['/test-list', classroomId]);
+  openClassroom(classroom: ClassroomData): void {
+    console.log('Classroom clicked:', classroom);
+    this.classroomService.setClassroom(classroom);
+    this.router.navigate(['/test-list', classroom.classroomId]);
   }
 
   logout(): void {
