@@ -1,25 +1,21 @@
-<div class="container">
-  <!-- Header with Title and Logout Button -->
-  <header class="header-bar">
-    <h1 class="app-title">My Classrooms</h1>
-    <button class="logout-btn" (click)="logout()">Logout</button>
+<div class="container mx-auto p-4 max-w-3xl">
+  <header class="flex justify-between items-center mb-5">
+    <h1 class="text-2xl font-semibold text-gray-800">My Classrooms</h1>
   </header>
 
-  <!-- Section Header -->
-  <h2 class="section-header">Your Classrooms</h2>
-
-  <!-- Classroom Cards Grid -->
-  <div class="cards-grid">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div
-      class="card"
+      class="bg-white rounded-lg shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow duration-200"
       *ngFor="let classroom of classrooms"
       (click)="openClassroom(classroom)"
     >
-      <div class="card-header">
-        <h3 class="card-title">{{ classroom.classroomName }}</h3>
-        <div class="dropdown-wrapper">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="text-lg font-medium text-gray-800">
+          {{ classroom.classroomName }}
+        </h3>
+        <div class="relative">
           <button
-            class="dropdown-btn"
+            class="text-xl text-gray-500 hover:text-gray-700"
             (click)="
               $event.stopPropagation(); toggleDropdown(classroom.classroomId)
             "
@@ -28,11 +24,11 @@
           </button>
           <div
             *ngIf="dropdownOpen === classroom.classroomId"
-            class="dropdown-menu"
+            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg overflow-hidden z-10"
           >
             <button
               *ngIf="classroom.teacherId === user.userId"
-              class="dropdown-item"
+              class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               (click)="
                 copyClassroomCode(classroom.classroomCode); closeDropdown()
               "
@@ -41,7 +37,7 @@
             </button>
             <button
               *ngIf="classroom.teacherId === user.userId"
-              class="dropdown-item delete"
+              class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
               (click)="
                 confirmDeleteClassroom(classroom.classroomId); closeDropdown()
               "
@@ -50,7 +46,7 @@
             </button>
             <button
               *ngIf="classroom.teacherId !== user.userId"
-              class="dropdown-item"
+              class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               (click)="leaveClassroom(classroom.classroomId); closeDropdown()"
             >
               🚪 Leave Classroom
@@ -58,56 +54,93 @@
           </div>
         </div>
       </div>
-      <p class="card-subtext">
+      <p class="text-sm text-gray-600 mb-1">
         <span *ngIf="classroom.teacherId === user.userId">Created by You</span>
         <span *ngIf="classroom.teacherId !== user.userId"
           >Created by: {{ classroom.teacherName }}</span
         >
       </p>
-      <p class="card-subtext" *ngIf="classroom.teacherId === user.userId">
-        Code: <span class="code-text">{{ classroom.classroomCode }}</span>
+      <p
+        class="text-sm text-gray-600"
+        *ngIf="classroom.teacherId === user.userId"
+      >
+        Code:
+        <span class="bg-gray-200 px-2 py-1 rounded font-mono">{{
+          classroom.classroomCode
+        }}</span>
       </p>
     </div>
   </div>
 
-  <!-- Fixed Action Buttons -->
-  <div class="fixed-buttons">
-    <button class="action-btn" (click)="toggleCreatePrompt()">
+  <div class="fixed bottom-5 right-5 flex flex-col gap-2">
+    <button
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
+      (click)="toggleCreatePrompt()"
+    >
       Create Classroom
     </button>
-    <button class="action-btn" (click)="toggleJoinPrompt()">
+    <button
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
+      (click)="toggleJoinPrompt()"
+    >
       Join Classroom
     </button>
   </div>
 
-  <!-- Create Classroom Prompt -->
-  <div class="prompt-overlay" *ngIf="showCreatePrompt">
-    <div class="prompt-container">
-      <h3>Create Classroom</h3>
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+    *ngIf="showCreatePrompt"
+  >
+    <div class="bg-white rounded-lg p-6 w-96">
+      <h3 class="text-lg font-semibold mb-4">Create Classroom</h3>
       <input
         type="text"
         [(ngModel)]="classroomName"
         placeholder="Enter classroom name"
+        class="w-full p-2 border rounded mb-4"
       />
-      <div class="prompt-buttons">
-        <button (click)="createClassroom()">Submit</button>
-        <button (click)="cancelCreate()">Cancel</button>
+      <div class="flex justify-around">
+        <button
+          class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
+          (click)="createClassroom()"
+        >
+          Submit
+        </button>
+        <button
+          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
+          (click)="cancelCreate()"
+        >
+          Cancel
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Join Classroom Prompt -->
-  <div class="prompt-overlay" *ngIf="showJoinPrompt">
-    <div class="prompt-container">
-      <h3>Join Classroom</h3>
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+    *ngIf="showJoinPrompt"
+  >
+    <div class="bg-white rounded-lg p-6 w-96">
+      <h3 class="text-lg font-semibold mb-4">Join Classroom</h3>
       <input
         type="text"
         [(ngModel)]="classroomCode"
         placeholder="Enter classroom code"
+        class="w-full p-2 border rounded mb-4"
       />
-      <div class="prompt-buttons">
-        <button (click)="joinClassroom()">Submit</button>
-        <button (click)="cancelJoin()">Cancel</button>
+      <div class="flex justify-around">
+        <button
+          class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
+          (click)="joinClassroom()"
+        >
+          Submit
+        </button>
+        <button
+          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
+          (click)="cancelJoin()"
+        >
+          Cancel
+        </button>
       </div>
     </div>
   </div>

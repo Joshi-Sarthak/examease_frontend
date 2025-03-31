@@ -1,61 +1,85 @@
-<div class="container">
-  <button class="back-btn" (click)="goBack()">⬅ Back to Classrooms</button>
+<div class="container mx-auto p-4 max-w-3xl">
+  <button
+    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md mb-5"
+    (click)="goBack()"
+  >
+    ⬅ Back to Classrooms
+  </button>
 
-  <div *ngIf="showNotFoundError" class="error-404">
-    <h2>❌ 404 - Classroom Not Found</h2>
-    <p>The classroom you're looking for does not exist or has been deleted.</p>
+  <div
+    *ngIf="showNotFoundError"
+    class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+  >
+    <strong class="font-bold">❌ 404 - Classroom Not Found</strong>
+    <span class="block sm:inline"
+      >The classroom you're looking for does not exist or has been
+      deleted.</span
+    >
   </div>
 
   <ng-container *ngIf="!showNotFoundError">
-    <h2 class="header">📚 Tests for Classroom</h2>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-5">
+      📚 Tests for Classroom
+    </h2>
 
-    <div *ngIf="tests.length > 0" class="test-list">
-      <div *ngFor="let test of tests" class="test-card">
-        <h3 class="test-title">{{ test.testName }}</h3>
-        <p class="test-info">
+    <div *ngIf="tests.length > 0" class="grid grid-cols-1 gap-4">
+      <div *ngFor="let test of tests" class="bg-white rounded-lg shadow-md p-4">
+        <h3 class="text-lg font-medium text-gray-800 mb-2">
+          {{ test.testName }}
+        </h3>
+        <p class="text-sm text-gray-600 mb-1">
           📅 <b>Start:</b> {{ test.startFrom | date : "short" }}
         </p>
-        <p class="test-info">
+        <p class="text-sm text-gray-600 mb-1">
           ⏳ <b>Deadline:</b> {{ test.deadlineTime | date : "short" }}
         </p>
-        <p class="test-info">⏱ <b>Duration:</b> {{ test.testTime }} mins</p>
+        <p class="text-sm text-gray-600 mb-2">
+          ⏱ <b>Duration:</b> {{ test.testTime }} mins
+        </p>
 
-        <div *ngIf="userRole === 'teacher'" class="teacher-options">
+        <div *ngIf="userRole === 'teacher'" class="flex gap-2 mt-2">
           <button
-            class="options-btn"
-            (click)="toggleDropdown(test.testId, $event)"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md"
+            (click)="editTest(test.testId)"
           >
-            Options ▼
+            Edit
           </button>
-          <div *ngIf="dropdownOpen[test.testId]" class="dropdown-content">
-            <a (click)="editTest(test.testId)">Edit Test</a>
-            <a (click)="deleteTest(test.testId)">🗑 Delete Test</a>
-            <a (click)="viewResults(test.testId)">📊 View Results</a>
-          </div>
+          <button
+            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md"
+            (click)="deleteTest(test.testId)"
+          >
+            Delete
+          </button>
+          <button
+            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md"
+            (click)="viewResults(test.testId)"
+          >
+            Results
+          </button>
         </div>
 
-        <div *ngIf="userRole === 'student'" class="student-options">
+        <div *ngIf="userRole === 'student'" class="mt-2">
           <button
             *ngIf="
               !studentResults[test.testId] &&
-              isTestActive(
-                test.startFrom,
-                test.deadlineTime
-              )
+              isTestActive(test.startFrom, test.deadlineTime)
             "
-            class="take-test-btn"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
             (click)="startTest(test.testId)"
           >
             📝 Take Test
           </button>
 
-          <div *ngIf="studentResults[test.testId]" class="bg">
-            <p class="result-info">
+          <div
+            *ngIf="studentResults[test.testId]"
+            class="bg-green-100 p-2 rounded-md mt-2"
+          >
+            <p class="text-sm text-green-700">
               <strong>✅ Score:</strong>
               {{ studentResults[test.testId]?.score }} /
               {{ studentResults[test.testId]?.total }}
             </p>
-            <p class="result-info">
+            <p class="text-sm text-green-700">
               <strong>📈 Percentage:</strong>
               {{ studentResults[test.testId]?.percentage }}%
             </p>
@@ -64,11 +88,16 @@
       </div>
     </div>
 
-    <div *ngIf="tests.length === 0" class="no-tests">🚫 No tests available</div>
+    <div
+      *ngIf="tests.length === 0"
+      class="text-center p-4 bg-gray-100 rounded-md mt-4 text-gray-600"
+    >
+      🚫 No tests available
+    </div>
 
     <button
       *ngIf="userRole === 'teacher'"
-      class="create-btn"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md mt-5"
       (click)="navigateToQuestionBuilder()"
     >
       ➕ Create New Test

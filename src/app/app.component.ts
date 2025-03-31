@@ -1,9 +1,10 @@
 import { Component, ChangeDetectorRef, Inject, PLATFORM_ID, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
-
+import { NavbarComponent } from "./components/navbar/navbar.component";
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -11,10 +12,12 @@ import { isPlatformBrowser } from '@angular/common';
   imports: [
     CommonModule,
     FormsModule,
-    RouterOutlet
-],
+    RouterOutlet,
+    NavbarComponent
+  ],
   template: `
       <div class="content">
+        <app-navbar *ngIf="showNavbar"></app-navbar>
         <router-outlet></router-outlet>
       </div>
   `,
@@ -39,10 +42,20 @@ export class AppComponent implements AfterViewInit {
   title(title: any) {
     throw new Error('Method not implemented.');
   }
+
+  showNavbar: boolean = true;
+
   constructor(
     private cdRef: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: any
-  ) {}
+    @Inject(PLATFORM_ID) private platformId: any,
+    private router: Router
+  ) {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.showNavbar = !(['/login', '/signup'].includes(event.url));
+      });
+  }
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {

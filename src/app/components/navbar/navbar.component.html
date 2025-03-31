@@ -1,0 +1,50 @@
+<nav
+  class="bg-gradient-to-r from-indigo-800 to-purple-800 text-white shadow-md"
+>
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <a class="text-2xl font-semibold tracking-wide" routerLink="/">ExamEase</a>
+
+    <div class="hidden md:flex space-x-6 items-center">
+      <a
+        routerLink="/classrooms"
+        class="hover:text-indigo-200 transition-colors duration-200"
+        >Classrooms</a
+      >
+      <a
+        routerLink="/profile"
+        class="hover:text-indigo-200 transition-colors duration-200"
+        >Profile</a
+      >
+      <button
+        class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md transition-colors duration-200"
+        (click)="logout()"
+      >
+        Logout
+      </button>
+    </div>
+
+    <button class="md:hidden text-xl" (click)="toggleMenu()">☰</button>
+  </div>
+
+  <div
+    *ngIf="menuOpen"
+    class="md:hidden bg-gradient-to-b from-indigo-800 to-purple-800"
+  >
+    <a
+      routerLink="/classrooms"
+      class="block px-4 py-2 text-white hover:bg-indigo-700 transition-colors duration-200"
+      >Classrooms</a
+    >
+    <a
+      routerLink="/profile"
+      class="block px-4 py-2 text-white hover:bg-indigo-700 transition-colors duration-200"
+      >Profile</a
+    >
+    <button
+      class="block w-full text-left px-4 py-2 text-white bg-red-600 hover:bg-red-700 transition-colors duration-200"
+      (click)="logout()"
+    >
+      Logout
+    </button>
+  </div>
+</nav>
