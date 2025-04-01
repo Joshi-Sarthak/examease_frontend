@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -11,10 +13,19 @@ import { FormsModule } from '@angular/forms';
 export class ProfileComponent {
   name: string = 'John Doe';
   email: string = 'johndoe@example.com';
-  role: string = 'Student'; // Change based on user role
-  profilePicture: string = 'https://via.placeholder.com/100';
+  
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+  ) {}
 
   saveProfile() {
     alert('Profile saved successfully!');
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

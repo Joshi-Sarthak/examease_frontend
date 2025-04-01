@@ -1,48 +1,100 @@
-<div class="result-container">
-
-  <div class="header-bar">
-    <button class="back-btn" (click)="goBack()">← Back</button>
-    <h2>Test Results</h2>
-    <button class="export-btn" (click)="exportCSV()">📥 Download CSV</button>
+<div class="result-container bg-gray-100 text-gray-900 min-h-screen p-6">
+  <!-- Header -->
+  <div
+    class="header-bar flex justify-between items-center mb-6 border-b border-gray-300 pb-4 bg-white shadow-md rounded-lg p-4"
+  >
+    <button
+      class="bg-gray-200 text-gray-800 px-5 py-2 rounded-md hover:bg-gray-300 transition"
+      (click)="goBack()"
+    >
+      ← Back
+    </button>
+    <h2 class="text-2xl font-semibold tracking-wide">Test Results</h2>
+    <button
+      class="bg-gray-800 text-white px-5 py-2 rounded-md hover:bg-gray-900 transition"
+      (click)="exportCSV()"
+    >
+      Download CSV
+    </button>
   </div>
 
-  <div *ngIf="isLoading">Loading...</div>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center text-gray-500 text-lg">
+    Loading...
+  </div>
 
-  <div *ngIf="studentsInClassroom.length === 0 && !isLoading">
+  <!-- Empty Classroom Message -->
+  <div
+    *ngIf="studentsInClassroom.length === 0 && !isLoading"
+    class="text-center text-gray-500 text-lg"
+  >
     Classroom is empty
   </div>
 
-  <div class="stats-container">
-    <h3>Class Performance Stats</h3>
-    <ul>
-      <li><strong>Total Students:</strong> {{ totalStudents }}</li>
-      <li><strong>Students Attempted:</strong> {{ studentsAttempted }}</li>
-      <li><strong>Students Not Attempted:</strong> {{ studentsNotAttempted }}</li>
-      <li><strong>Class Average Score:</strong> {{ classAverage | number: '1.2-2' }}%</li>
-      <li><strong>Highest Score:</strong> {{ highestScore }}</li>
-      <li><strong>Lowest Score:</strong> {{ lowestScore }}</li>
+  <!-- Stats Container -->
+  <div
+    class="stats-container bg-white p-5 rounded-lg shadow-md mb-6 border border-gray-300"
+  >
+    <h3 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3">
+      Class Performance Stats
+    </h3>
+    <ul class="space-y-3 text-gray-700">
+      <li>
+        <strong class="text-gray-900">Total Students:</strong>
+        {{ totalStudents }}
+      </li>
+      <li>
+        <strong class="text-gray-900">Students Attempted:</strong>
+        {{ studentsAttempted }}
+      </li>
+      <li>
+        <strong class="text-gray-900">Students Not Attempted:</strong>
+        {{ studentsNotAttempted }}
+      </li>
+      <li>
+        <strong class="text-gray-900">Class Average Score:</strong>
+        {{ classAverage | number : "1.2-2" }}%
+      </li>
+      <li>
+        <strong class="text-gray-900">Highest Score:</strong> {{ highestScore }}
+      </li>
+      <li>
+        <strong class="text-gray-900">Lowest Score:</strong> {{ lowestScore }}
+      </li>
     </ul>
   </div>
 
-  <table *ngIf="!isLoading && results.length > 0" class="result-table">
-    <thead>
-      <tr>
-        <th>Student Name</th>
-        <th>Score</th>
-        <th>Total</th>
-        <th>Percentage</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let result of results">
-        <td>{{ result.studentId }}</td>
-        <!-- <td>{{ result.studentName }}</td> -->
-        <td>{{ result.result }}</td>
-        <td>{{ test!.questions.length }}</td>
-        <td>{{ (result.result / test!.questions.length) * 100 | number: '1.2-2' }}%</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <button (click)="goBack()" class="back-button">Back to Tests</button>
+  <!-- Results Table -->
+  <div class="overflow-x-auto">
+    <table
+      *ngIf="!isLoading && results.length > 0"
+      class="w-full text-left border border-gray-300 rounded-lg overflow-hidden bg-white shadow-md"
+    >
+      <thead class="bg-gray-200 text-gray-700 text-sm uppercase tracking-wide">
+        <tr>
+          <th class="p-4">Student Name</th>
+          <th class="p-4">Score</th>
+          <th class="p-4">Total</th>
+          <th class="p-4">Percentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let result of results"
+          class="border-b bg-gray-50 hover:bg-gray-100 transition"
+        >
+          <td class="p-4">{{ result.studentId }}</td>
+          <td class="p-4 font-medium text-gray-900">{{ result.result }}</td>
+          <td class="p-4 font-medium text-gray-900">
+            {{ test!.questions.length }}
+          </td>
+          <td class="p-4 font-medium text-green-600">
+            {{
+              (result.result / test!.questions.length) * 100 | number : "1.2-2"
+            }}%
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

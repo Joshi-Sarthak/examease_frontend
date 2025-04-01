@@ -21,7 +21,7 @@
   <!-- Classrooms Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     <div
-      class="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+      class="bg-white relative rounded-xl shadow-md p-5 hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
       *ngFor="let classroom of classrooms"
       (click)="openClassroom(classroom)"
     >
@@ -40,18 +40,18 @@
       </div>
       <p class="text-sm text-gray-500 mt-2">
         <span *ngIf="classroom.teacherId === user.userId">Created by You</span>
-        <span *ngIf="classroom.teacherId !== user.userId"
-          >Created by: {{ classroom.teacherName }}</span
-        >
+        <span *ngIf="classroom.teacherId !== user.userId">
+          Created by: {{ classroom.teacherName }}
+        </span>
       </p>
       <p
         class="text-sm text-gray-600 mt-1 font-medium"
         *ngIf="classroom.teacherId === user.userId"
       >
         Code:
-        <span class="bg-gray-200 px-2 py-1 rounded font-mono">{{
-          classroom.classroomCode
-        }}</span>
+        <span class="bg-gray-200 px-2 py-1 rounded font-mono">
+          {{ classroom.classroomCode }}
+        </span>
       </p>
 
       <!-- Dropdown Menu -->
@@ -77,10 +77,19 @@
         </button>
         <button
           *ngIf="classroom.teacherId !== user.userId"
-          class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           (click)="leaveClassroom(classroom.classroomId); closeDropdown()"
         >
-          🚪 Leave Classroom
+          <svg
+            class="w-5 h-5 mr-2 fill-gray-700"
+            viewBox="0 0 576 512"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M320 32c0-9.9-4.5-19.2-12.3-25.2S289.8-1.4 280.2 1l-179.9 45C79 51.3 64 70.5 64 92.5V448H32c-17.7 0-32 14.3-32 32s14.3 32 32 32H96 288h32V480 32zM256 256c0 17.7-10.7 32-24 32s-24-14.3-24-32s10.7-32 24-32s24 14.3 24 32zm96-128h96V480c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H512V128c0-35.3-28.7-64-64-64H352v64z"
+            ></path>
+          </svg>
+          Leave Classroom
         </button>
       </div>
     </div>

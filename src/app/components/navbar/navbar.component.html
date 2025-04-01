@@ -1,6 +1,6 @@
-<nav class="bg-white shadow-md">
+<nav class="bg-white shadow-md font-sans">
   <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-    <a class="text-xl font-semibold text-gray-900" routerLink="/">ExamEase</a>
+    <a class="text-xl font-bold text-gray-900" routerLink="/">ExamEase</a>
 
     <div class="hidden md:flex space-x-6 items-center">
       <a
@@ -11,12 +11,6 @@
       <a routerLink="/profile" class="text-gray-700 hover:text-indigo-600"
         >Profile</a
       >
-      <button
-        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-        (click)="logout()"
-      >
-        Logout
-      </button>
     </div>
 
     <!-- Mobile Menu Button -->
@@ -37,11 +31,5 @@
       class="block px-4 py-3 text-gray-700 hover:bg-gray-100"
       >Profile</a
     >
-    <button
-      class="w-full text-left px-4 py-3 text-white bg-red-500 hover:bg-red-600"
-      (click)="logout()"
-    >
-      Logout
-    </button>
   </div>
 </nav>

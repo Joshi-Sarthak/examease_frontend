@@ -1,51 +1,98 @@
-<div class="signup-container">
-  <h2>Signup</h2>
+<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-semibold text-gray-800 text-center mb-4">
+      Sign Up
+    </h2>
 
-  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <!-- Error Message -->
+    <p *ngIf="errorMessage" class="text-red-500 text-sm text-center mb-4">
+      {{ errorMessage }}
+    </p>
 
-  <label for="username">Username:</label>
-  <input
-    type="text" 
-    id="username"
-    [(ngModel)]="username"
-    placeholder="Enter username"
-  />
+    <!-- Username Field -->
+    <div class="mb-4">
+      <label class="block text-gray-700 font-medium mb-1" for="username"
+        >Username:</label
+      >
+      <input
+        type="text"
+        id="username"
+        [(ngModel)]="username"
+        placeholder="Enter username"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      />
+    </div>
 
-  <label for="fullName">Full Name:</label>
-  <input
-    type="text"
-    id="fullName"
-    [(ngModel)]="fullName"
-    placeholder="Enter your full name"
-  />
+    <!-- Full Name Field -->
+    <div class="mb-4">
+      <label class="block text-gray-700 font-medium mb-1" for="fullName"
+        >Full Name:</label
+      >
+      <input
+        type="text"
+        id="fullName"
+        [(ngModel)]="fullName"
+        placeholder="Enter your full name"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      />
+    </div>
 
-  <label for="email">Email:</label>
-  <input
-    type="email"
-    id="email"
-    [(ngModel)]="email"
-    placeholder="Enter email"
-  />
+    <!-- Email Field -->
+    <div class="mb-4">
+      <label class="block text-gray-700 font-medium mb-1" for="email"
+        >Email:</label
+      >
+      <input
+        type="email"
+        id="email"
+        [(ngModel)]="email"
+        placeholder="Enter email"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      />
+    </div>
 
-  <label for="password">Password:</label>
-  <input
-    type="password"
-    id="password"
-    [(ngModel)]="password"
-    placeholder="Enter password"
-  />
+    <!-- Password Field -->
+    <div class="mb-4">
+      <label class="block text-gray-700 font-medium mb-1" for="password"
+        >Password:</label
+      >
+      <input
+        type="password"
+        id="password"
+        [(ngModel)]="password"
+        placeholder="Enter password"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      />
+    </div>
 
-  <label for="confirmPassword">Confirm Password:</label>
-  <input
-    type="password"
-    id="confirmPassword"
-    [(ngModel)]="confirmPassword"
-    placeholder="Confirm password"
-  />
+    <!-- Confirm Password Field -->
+    <div class="mb-4">
+      <label class="block text-gray-700 font-medium mb-1" for="confirmPassword"
+        >Confirm Password:</label
+      >
+      <input
+        type="password"
+        id="confirmPassword"
+        [(ngModel)]="confirmPassword"
+        placeholder="Confirm password"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      />
+    </div>
 
-  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <!-- Signup Button -->
+    <button
+      (click)="signup()"
+      class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-all"
+    >
+      Sign Up
+    </button>
 
-  <button (click)="signup()">Signup</button>
-
-  <p>Already have an account? <a routerLink="/">Login</a></p>
+    <!-- Login Link -->
+    <p class="text-gray-600 text-sm text-center mt-4">
+      Already have an account?
+      <a routerLink="/" class="text-blue-600 hover:underline font-medium"
+        >Login</a
+      >
+    </p>
+  </div>
 </div>
