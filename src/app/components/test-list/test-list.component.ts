@@ -35,21 +35,23 @@ export class TestListComponent {
   ) {}
 
   ngOnInit(): void {
+    this.testService.setTest(null);
     this.classroom = this.classroomService.getClassroom();
 
     if (!this.classroom) {
       this.route.paramMap.subscribe((params) => {
         this.classroomId = params.get('classroomId') || '';
 
-        if (!this.classroom) {
-          this.classroom = this.classroomService.getClassroomById(this.classroomId);
-        }
+        this.classroomService.getClassroomById(this.classroomId).subscribe((classroom) => {
+          this.classroom = classroom;
 
-        if (!this.classroom) {
-          this.showNotFoundError = true;
-        } else {
-          this.loadUserData();
-        }
+          if (!this.classroom) {
+            this.showNotFoundError = true;
+          } else {
+            this.classroomService.setClassroom(this.classroom);
+            this.loadUserData();
+          }
+        });
       });
     } else {
       this.loadUserData();
@@ -81,17 +83,21 @@ export class TestListComponent {
   }
 
   private loadData(userId: string): void {
-    this.tests = this.testService.getTestsForClassroom(this.classroom!.classroomId);
+    this.tests = this.testService.getTestsForClassroom(this.classroom!.classroomId) || [];
     this.userRole = this.classroom?.teacherId === userId ? 'teacher' : 'student';
-
+  
     if (this.userRole === 'student') {
       this.tests.forEach((test) => {
+        if (!test.testId) {
+          return;
+        }
+  
         const resultsArray = Array.isArray(test.result) ? test.result : [];
-        const result = resultsArray.filter((r) => r.studentId === userId);
-        this.studentResults[test.testId] = result.length > 0 ? result[0] : null;
+        const result = resultsArray.find((r) => r.studentId === userId) || null;
+        this.studentResults[test.testId] = result ? result.result ? result : null : null;
       });
     }
-  }
+  }  
 
   goBack(): void {
     this.router.navigate(['/classroom-list']);
@@ -119,11 +125,10 @@ export class TestListComponent {
       this.testService.deleteTest(this.classroom!.classroomId, testId);
       this.tests = this.tests.filter(test => test.testId !== testId);
     }
-  }  
+  }
 
   editTest(test: TestData): void {
     this.testService.setTest(test);
-    console.log('classroom before', this.classroom);
     this.router.navigate(['/question-builder', this.classroom!.classroomId, test.testId]);
   }
 

@@ -8,7 +8,6 @@ import { TestData } from '../../../models/test.model';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { Result } from '../../../models/test.model';
-import test from 'node:test';
 
 @Component({
   selector: 'app-teacher-result',
@@ -53,18 +52,16 @@ export class TeacherResultComponent implements OnInit {
         this.router.navigate(['/classroom-list']);
       }
     });
-    
+
     if (!this.classroom) {
       this.route.paramMap.subscribe((params) => {
         this.classroomId = params.get('classroomId') || '';
         
-        if (!this.classroom) {
-          this.classroom = this.classroomService.getClassroomById(this.classroomId);
-        }
-        
-        // if still classroom is null, show Error 404 classroom Not found
-        if (!this.classroom) {
-          alert('Error 404! Classroom not found!');
+        if (this.classroomId) {
+          this.classroomService.getClassroomById(this.classroomId).subscribe((classroomData) => {
+            this.classroom = classroomData;
+            this.fetchTestResults();
+          });
         }
       });
     }
@@ -74,24 +71,17 @@ export class TeacherResultComponent implements OnInit {
       this.route.paramMap.subscribe((params) => {
         this.testId = this.route.snapshot.paramMap.get('testId')!;
         
-        if (!this.test) {
+        if (this.testId) {
           this.test = this.testService.getTestById(this.testId);
-        }
-        
-        // if still classroom is null, show Error 404 classroom Not found
-        if (!this.test) {
-          alert('Error 404! Test not found!');
         }
       });
     }
-    
-    this.fetchTestResults();
+
     this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         if (!(event.url.includes('/teacher-result') && event.url.includes(this.testId) && event.url.includes(this.classroomId))) {
-          this.testService.setTest(null);
           if (!(event.url.includes('/test-list') && event.url.includes(this.classroomId))) {
-            // this.classroomService.setClassroom(null);
+            // Optional cleanup logic here
           }
         }
       }
@@ -99,10 +89,12 @@ export class TeacherResultComponent implements OnInit {
   }
   
   fetchTestResults() {
-    this.results = this.test?.result || [];
-    this.findStudentsNotTested();
-    this.calculateStats();
-    this.isLoading = false;
+    if (this.test) {
+      this.results = this.test.result || [];
+      this.findStudentsNotTested();
+      this.calculateStats();
+      this.isLoading = false;
+    }
   }
 
   calculateStats() {

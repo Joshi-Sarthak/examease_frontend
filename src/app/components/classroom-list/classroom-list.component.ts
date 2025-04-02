@@ -15,13 +15,13 @@ import { CommonModule } from '@angular/common';
 })
 export class ClassroomListComponent {
   classrooms: ClassroomData[] = [];
-  classroomName: string = '';
-  classroomCode: string = '';
+  classroomName = '';
+  classroomCode = '';
   dropdownOpen: string | null = null;
   user: any = null;
 
-  showCreatePrompt: boolean = false;
-  showJoinPrompt: boolean = false;
+  showCreatePrompt = false;
+  showJoinPrompt = false;
 
   constructor(
     private classroomService: ClassroomService,
@@ -30,18 +30,24 @@ export class ClassroomListComponent {
   ) {}
 
   ngOnInit(): void {
-    this.authService.getUser().subscribe((user) => {
-      this.user = user;
-      if (!this.user) {
-        this.router.navigate(['/login']);
-      } else {
-        this.loadUserClassrooms();
-      }
+    this.authService.getUser().subscribe({
+      next: (user) => {
+        this.user = user;
+        if (!this.user) {
+          this.router.navigate(['/login']);
+        } else {
+          this.loadUserClassrooms();
+        }
+      },
+      error: (err) => console.error('Error fetching user:', err)
     });
   }
 
   loadUserClassrooms(): void {
-    this.classrooms = this.classroomService.getUserClassrooms(this.user.userId);
+    this.classroomService.getUserClassrooms(this.user.userId).subscribe({
+      next: (classrooms) => (this.classrooms = classrooms),
+      error: (err) => console.error('Error fetching classrooms:', err)
+    });
   }
 
   toggleCreatePrompt(): void {
@@ -68,17 +74,18 @@ export class ClassroomListComponent {
       return;
     }
 
-    const classroomId = Date.now().toString();
-    this.classroomService.createClassroom(
-      classroomId, 
-      this.classroomName, 
-      this.user.userId, 
-      this.user.fullName,
-    );
-    this.loadUserClassrooms();
-
-    this.classroomName = '';
-    this.showCreatePrompt = false;
+    this.classroomService.createClassroom(this.classroomName, this.user.userId, this.user.fullName).subscribe({
+      next: (classroom) => {
+        if (classroom) {
+          this.classrooms.push(classroom);
+          this.cancelCreate();
+        }
+      },
+      error: (err) => {
+        alert('Error creating classroom');
+        console.error('Error:', err);
+      }
+    });
   }
 
   joinClassroom(): void {
@@ -87,16 +94,19 @@ export class ClassroomListComponent {
       return;
     }
 
-    const classroom = this.classroomService.joinClassroom(this.classroomCode, this.user.userId);
-    if (classroom) {
-      alert('Joined Successfully!');
-      this.loadUserClassrooms();
-      this.showJoinPrompt = false;
-      this.classroomCode = '';
-      this.router.navigate(['/test-list', classroom.classroomId]);
-    } else {
-      alert('Invalid Code!');
-    }
+    this.classroomService.joinClassroom(this.user.userId, this.classroomCode).subscribe({
+      next: (classroom) => {
+        if (classroom) {
+          alert('Joined Successfully!');
+          this.classrooms.push(classroom);
+          this.cancelJoin();
+          this.router.navigate(['/test-list', classroom.classroomId]);
+        }
+      },
+      error: (err) => {
+        alert(err);
+      }
+    });
   }
 
   openClassroom(classroom: ClassroomData): void {
@@ -116,18 +126,20 @@ export class ClassroomListComponent {
   }
 
   confirmDeleteClassroom(classroomId: string): void {
-    const confirmation = confirm('Are you sure you want to delete this classroom? This action cannot be undone.');
-    if (confirmation) {
-      this.classroomService.deleteClassroom(classroomId);
-      this.loadUserClassrooms();
+    if (confirm('Are you sure you want to delete this classroom? This action cannot be undone.')) {
+      this.classroomService.deleteClassroom(this.user.userId, classroomId).subscribe({
+        next: () => (this.classrooms = this.classrooms.filter((c) => c.classroomId !== classroomId)),
+        error: (err) => console.error('Error deleting classroom:', err)
+      });
     }
   }
 
   leaveClassroom(classroomId: string): void {
-    const confirmation = confirm('Are you sure you want to leave this classroom?');
-    if (confirmation) {
-      this.classroomService.leaveClassroom(classroomId, this.user.userId);
-      this.loadUserClassrooms();
+    if (confirm('Are you sure you want to leave this classroom?')) {
+      this.classroomService.leaveClassroom(this.user.userId, classroomId).subscribe({
+        next: () => (this.classrooms = this.classrooms.filter((c) => c.classroomId !== classroomId)),
+        error: (err) => console.error('Error leaving classroom:', err)
+      });
     }
   }
 
@@ -140,7 +152,7 @@ export class ClassroomListComponent {
   }
 
   closeDropdownOnClickOutside(event: MouseEvent): void {
-    if (!(event.target as HTMLElement).closest(".relative")) {
+    if (!(event.target as HTMLElement).closest('.relative')) {
       this.closeDropdown();
     }
   }

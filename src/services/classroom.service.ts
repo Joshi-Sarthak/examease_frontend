@@ -1,138 +1,153 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, forkJoin, throwError } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import { ClassroomData } from '../models/classroom.model';
-import { json } from 'stream/consumers';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClassroomService {
-  private classroomsKey = 'classrooms';
-  private selectedClassroomKey = 'selectedClassroom';
+  private apiUrl = 'http://localhost:5000/classroom';
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
-  // keep it as it is
-  setClassroom(classroom: ClassroomData | null): void {
-    localStorage.setItem(this.selectedClassroomKey, JSON.stringify(classroom));
-  }
-
-  //keep it as it is
-  getClassroom(): ClassroomData | null {
-    const data = localStorage.getItem(this.selectedClassroomKey);
-    return data ? JSON.parse(data) : null;
-  }  
-
-  getClassroomById(classroomId: string): ClassroomData | null {
-    const data = localStorage.getItem(this.classroomsKey);
-    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
-    
-    return classrooms.find((c) => c.classroomId === classroomId) || null;
-  }
-
-  getClassroomsForTeachers(userId: string): ClassroomData[] {
-    const data = localStorage.getItem(this.classroomsKey);
-    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
-  
-    return classrooms.filter(
-      (classroom) =>
-        classroom.teacherId === userId
+  getClassroomById(classroomId: string): Observable<ClassroomData | null> {
+    return this.http.get<{ classroom: any; error?: string }>(`${this.apiUrl}/id/${classroomId}`).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        return this.mapClassroom(response.classroom);
+      }),
+      catchError(err => this.handleError(err))
     );
   }
 
-  getClassroomsForStudents(userId: string): ClassroomData[] {
-    const data = localStorage.getItem(this.classroomsKey);
-    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
-  
-    return classrooms.filter(
-      (classroom) =>
-        (Array.isArray(classroom.students) && classroom.students.includes(userId))
+  getClassroomsForTeacher(userId: string): Observable<ClassroomData[]> {
+    return this.http.get<{ classrooms?: any[]; error?: string }>(`${this.apiUrl}/teacher/${userId}`).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        return (response.classrooms || []).map(c => this.mapClassroom(c)).filter((c): c is ClassroomData => c !== null);
+      }),
+      catchError(err => this.handleError(err))
     );
   }
 
-  getUserClassrooms(userId: string): ClassroomData[] {
-  
-    const data = localStorage.getItem(this.classroomsKey);
-    if (!data) {
-      return [];
-    }
-  
-    const classrooms: ClassroomData[] = JSON.parse(data);
-  
-    const filteredClassrooms = classrooms.filter(
-      (classroom) =>
-        classroom.teacherId === userId ||
-        (Array.isArray(classroom.students) && classroom.students.includes(userId))
+  getClassroomsForStudent(userId: string): Observable<ClassroomData[]> {
+    return this.http.get<{ classrooms?: any[]; error?: string }>(`${this.apiUrl}/student/${userId}`).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        return (response.classrooms || []).map(c => this.mapClassroom(c)).filter((c): c is ClassroomData => c !== null);
+      }),
+      catchError(err => this.handleError(err))
     );
-  
-    return filteredClassrooms;
   }
-  
-  
-  createClassroom(classroomId: string, classroomName: string, teacherId: string, teacherName: string): void {
-    const data = localStorage.getItem(this.classroomsKey);
-    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
 
-    classrooms.push({
-      classroomId,
+  getUserClassrooms(userId: string): Observable<ClassroomData[]> {
+    return forkJoin([
+      this.getClassroomsForTeacher(userId),
+      this.getClassroomsForStudent(userId)
+    ]).pipe(
+      map(([teacherClassrooms, studentClassrooms]) => [...teacherClassrooms, ...studentClassrooms]),
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  createClassroom(classroomName: string, teacherId: string, teacherName: string): Observable<ClassroomData | null> {
+    return this.http.post<{ message: string; classroom: any; error?: string }>(`${this.apiUrl}/create`, {
       classroomName,
-      classroomCode: classroomId.slice(-6),
-      createdAt: new Date(),
       teacherId,
-      teacherName,
-      students: [],
-    });
-
-    localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
+      teacherName
+    }).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        return this.mapClassroom(response.classroom);
+      }),
+      catchError(err => this.handleError(err))
+    );
   }
 
-  joinClassroom(classroomCode: string, userId: string): ClassroomData | undefined {
-    const data = localStorage.getItem(this.classroomsKey);
-    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
-  
-    const classroom = classrooms.find((c) => c.classroomCode === classroomCode);
-  
-    if (classroom) {
-      classroom.students = classroom.students ?? [];
-  
-      if (!classroom.students.includes(userId)) {
-        classroom.students.push(userId);
-        localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
-      }
-    }
-  
-    return classroom;
+  joinClassroom(userId: string, classroomCode: string): Observable<ClassroomData | null> {
+    return this.http.post<{ message?: string; classroom?: any; error?: string }>(
+      `${this.apiUrl}/join`, 
+      { userId, classroomCode }, 
+      { headers: { 'Content-Type': 'application/json' } }
+    ).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        return this.mapClassroom(response.classroom);
+      }),
+      catchError(err => this.handleError(err))
+    );
   }  
 
-  getClassroomByCode(classroomCode: string): ClassroomData | undefined {
-    const data = localStorage.getItem(this.classroomsKey);
-    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
-
-    return classrooms.find((c) => c.classroomCode === classroomCode);
+  leaveClassroom(userId: string, classroomId: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string; error?: string }>(`${this.apiUrl}/leave`, {
+      userId,
+      classroomId
+    }).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        return response;
+      }),
+      catchError(err => this.handleError(err))
+    );
   }
 
-  leaveClassroom(classroomId: string, userId: string): boolean {
-    const data = localStorage.getItem(this.classroomsKey);
-    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
-
-    const classroom = classrooms.find((c) => c.classroomId === classroomId);
-    if (classroom) {
-      classroom.students = classroom.students.filter((studentId) => studentId !== userId);
-      localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
-      return true;
-    }
-    return false;
+  deleteClassroom(userId: string, classroomId: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string; error?: string }>(`${this.apiUrl}/delete/${userId}/${classroomId}`).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        return response;
+      }),
+      catchError(err => this.handleError(err))
+    );
   }
 
-  deleteClassroom(classroomId: string): boolean {
-    const data = localStorage.getItem(this.classroomsKey);
-    const classrooms: ClassroomData[] = data ? JSON.parse(data) : [];
-
-    const index = classrooms.findIndex((c) => c.classroomId === classroomId);
-    if (index !== -1) {
-      classrooms.splice(index, 1);
-      localStorage.setItem(this.classroomsKey, JSON.stringify(classrooms));
-      return true;
+  private mapClassroom(classroom: any): ClassroomData | null {
+    if (!classroom) {
+      return null;
     }
-    return false;
+    
+    const mappedClassroom: ClassroomData = {
+      classroomId: classroom._id,
+      classroomName: classroom.classroomName,
+      classroomCode: classroom.classroomCode,
+      teacherId: classroom.teacherId,
+      teacherName: classroom.teacherName,
+      students: classroom.students || [],
+      createdAt: classroom.createdAt
+    };
+  
+    console.log('Mapped Classroom:', mappedClassroom);
+    return mappedClassroom;
+  }  
+
+  setClassroom(classroom: ClassroomData | null): void {
+    localStorage.setItem('selectedClassroom', JSON.stringify(classroom));
+  }
+
+  getClassroom(): ClassroomData | null {
+    const data = localStorage.getItem('selectedClassroom');
+    return data ? JSON.parse(data) : null;
+  }
+
+  private handleError(err: any) {
+    console.error('HTTP Error:', err);
+    const errorMessage = err.error?.error || 'Something went wrong';
+    return throwError(() => errorMessage);
   }
 }
