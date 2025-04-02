@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:5001/auth';
+  private readonly apiUrl = 'http://localhost:5000/auth';
   private currentUserSubject: BehaviorSubject<UserData | null>;
   currentUser$: Observable<UserData | null>;
 

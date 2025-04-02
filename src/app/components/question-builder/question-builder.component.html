@@ -77,20 +77,6 @@
         >
           Extract Text from Image
         </button>
-        <button
-          class="bg-gray-700 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
-          (click)="onSelectCropImage('question')"
-        >
-          {{ currentQuestion.questionImage ? "Delete Image" : "Crop Image" }}
-        </button>
-      </div>
-
-      <div class="mt-4" *ngIf="currentQuestion.questionImage">
-        <img
-          class="rounded-md shadow-md"
-          [src]="currentQuestion.questionImage"
-          alt="Question Cropped Image"
-        />
       </div>
 
       <div class="mt-6">
@@ -120,19 +106,6 @@
               >
                 Extract Text
               </button>
-              <button
-                class="bg-gray-700 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
-                (click)="onSelectCropImage('option', i)"
-              >
-                {{ option.image ? "Delete Image" : "Crop Image" }}
-              </button>
-            </div>
-            <div class="mt-2" *ngIf="option.image">
-              <img
-                class="rounded-md shadow-md"
-                [src]="option.image"
-                alt="Option Cropped Image"
-              />
             </div>
           </li>
         </ul>

@@ -60,7 +60,6 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       document.addEventListener("click", (event) => {
-        console.log("Clicked:", event.target);
         this.cdRef.detectChanges();
       });
     }

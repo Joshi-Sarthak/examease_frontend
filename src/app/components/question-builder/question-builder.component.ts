@@ -90,9 +90,7 @@ export class QuestionBuilderComponent implements OnInit {
     const newOption: OptionData = {
       optionId: new Date().getTime().toString(),
       optionText: '',
-      optionNumber: this.currentQuestion.options.length + 1,
-      questionId: this.currentQuestion.questionId,
-      image: null
+      optionNumber: this.currentQuestion.options.length + 1
     };
     this.currentQuestion.options.push(newOption);
   }
@@ -145,46 +143,6 @@ export class QuestionBuilderComponent implements OnInit {
     }
   }
 
-  onSelectCropImage(field: 'question' | 'option', optionIndex: number = -1): void {
-    if (field === 'question') {
-      if (this.currentQuestion.questionImage) {
-        this.currentQuestion.questionImage = null; 
-      } else if (this.imageChangedEvent) {
-        this.croppingField = 'question';
-        this.croppingOptionIndex = null;
-        this.finalizeCroppedImage();
-      } else {
-        document.getElementById('fileInput')?.click();
-      }
-    } else {
-      if (this.currentQuestion.options[optionIndex].image) {
-        this.currentQuestion.options[optionIndex].image = null;
-      } else if (this.imageChangedEvent) {
-        this.croppingField = 'option';
-        this.croppingOptionIndex = optionIndex;
-        this.finalizeCroppedImage();
-      } else {
-        document.getElementById('fileInput')?.click();
-      }
-    }
-  }  
-
-  toggleCropImage(target: string, index: number = -1) {
-    if (target === 'question') {
-      if (this.currentQuestion.questionImage) {
-        this.currentQuestion.questionImage = null;
-      } else {
-        this.onSelectCropImage('question');
-      }
-    } else {
-      if (this.currentQuestion.options[index].image) {
-        this.currentQuestion.options[index].image = null;
-      } else {
-        this.onSelectCropImage('option', index);
-      }
-    }
-  }
-
   onFileSelected(event: Event): void {
     const target = event.target as HTMLInputElement;
     if (target.files?.length) {
@@ -205,27 +163,6 @@ export class QuestionBuilderComponent implements OnInit {
         width: event.cropperPosition.x2 - event.cropperPosition.x1,
         height: event.cropperPosition.y2 - event.cropperPosition.y1,
       };
-    }
-  }
-
-  async finalizeCroppedImage(): Promise<void> {
-    if (!this.selectedFile || !this.croppedArea) return;
-
-    try {
-      const croppedImageFile = await this.createCroppedImage();
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64Img = reader.result as string;
-        if (this.croppingField === 'question') {
-          this.currentQuestion.questionImage = base64Img;
-        } else if (this.croppingField === 'option' && this.croppingOptionIndex !== null) {
-          this.currentQuestion.options[this.croppingOptionIndex].image = base64Img;
-        }
-      };
-      reader.readAsDataURL(croppedImageFile);
-    } catch (error) {
-      console.error('Error finalizing cropped image:', error);
     }
   }
 

@@ -131,8 +131,6 @@ export class ClassroomService {
       students: classroom.students || [],
       createdAt: classroom.createdAt
     };
-  
-    console.log('Mapped Classroom:', mappedClassroom);
     return mappedClassroom;
   }  
 
