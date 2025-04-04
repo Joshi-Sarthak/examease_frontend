@@ -1,4 +1,21 @@
-import { QuestionData } from '../models/question.model';
+export interface OptionData {
+  optionId: string;
+  optionText: string;
+  optionNumber: number;
+}
+
+export interface QuestionData {
+  questionId: string;
+  questionText: string;
+  questionNumber: number;
+  correctOptionIndex: number;
+  options: OptionData[];
+}
+
+export interface Result {
+  studentId: string;
+  result: number;
+}
 
 export interface TestData {
   testId: string;
@@ -10,9 +27,4 @@ export interface TestData {
   testTime: number;
   result: Result[]
   classroomId?: string;
-}
-
-export interface Result {
-  studentId: string;
-  result: number;
 }
