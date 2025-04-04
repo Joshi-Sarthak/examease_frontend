@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core'; 
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TestService } from '../../../services/test.service';
 import { ClassroomService } from '../../../services/classroom.service';
-import { ClassroomData } from '../../../models/classroom.model';
-import { TestData } from '../../../models/test.model';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
-import { Result } from '../../../models/test.model';
+import { ClassroomData } from '../../../models/classroom.model';
+import { TestData } from '../../../models/test.model';
 
 @Component({
   selector: 'app-teacher-result',
@@ -18,7 +17,7 @@ import { Result } from '../../../models/test.model';
 })
 export class TeacherResultComponent implements OnInit {
   testId!: string;
-  results: Result[] = [];
+  results: any[] = [];
   studentsInClassroom: string[] = [];
   studentsNotTested: string[] = [];
   isLoading: boolean = true;
@@ -44,7 +43,7 @@ export class TeacherResultComponent implements OnInit {
 
   ngOnInit() {
     this.classroom = this.classroomService.getClassroom();
-    
+
     this.authService.getUser().subscribe((user) => {
       if (!user) {
         this.router.navigate(['/login']);
@@ -53,29 +52,24 @@ export class TeacherResultComponent implements OnInit {
       }
     });
 
-    if (!this.classroom) {
-      this.route.paramMap.subscribe((params) => {
-        this.classroomId = params.get('classroomId') || '';
-        
-        if (this.classroomId) {
-          this.classroomService.getClassroomById(this.classroomId).subscribe((classroomData) => {
-            this.classroom = classroomData;
-            this.fetchTestResults();
-          });
-        }
-      });
-    }
-    
-    this.test = this.testService.getTest();
-    if (!this.test) {
-      this.route.paramMap.subscribe((params) => {
-        this.testId = this.route.snapshot.paramMap.get('testId')!;
-        
-        if (this.testId) {
-          this.test = this.testService.getTestById(this.testId);
-        }
-      });
-    }
+    this.route.paramMap.subscribe((params) => {
+      this.classroomId = params.get('classroomId') || '';
+      this.testId = params.get('testId') || '';
+
+      if (this.classroomId) {
+        this.classroomService.getClassroomById(this.classroomId).subscribe((classroomData) => {
+          this.classroom = classroomData;
+          this.fetchTestResults();
+        });
+      }
+
+      if (this.testId) {
+        this.testService.getTestById(this.testId).subscribe(test => {
+          this.test = test;
+          this.fetchTestResults();
+        });
+      }
+    });
 
     this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
@@ -87,30 +81,38 @@ export class TeacherResultComponent implements OnInit {
       }
     });
   }
-  
+
   fetchTestResults() {
-    if (this.test) {
-      this.results = this.test.result || [];
-      this.findStudentsNotTested();
-      this.calculateStats();
-      this.isLoading = false;
+    if (this.testId) {
+      this.testService.getDetailedTestResults(this.testId).subscribe({
+        next: (results) => {
+          this.results = results;
+          this.findStudentsNotTested();
+          this.calculateStats();
+          this.isLoading = false;
+          console.log('Test results:', this.results);
+        },
+        error: (err) => {
+          console.error('Error fetching test results:', err);
+          this.isLoading = false;
+        },
+      });
     }
   }
 
   calculateStats() {
     if (this.results.length === 0) return;
 
-    const correctAnswerCounts = this.results.map(r => r.result);
+    const scores = this.results.map(r => r.score);
 
     this.studentsAttempted = this.results.length;
     this.totalStudents = this.studentsInClassroom.length;
     this.studentsNotAttempted = this.totalStudents - this.studentsAttempted;
 
-    const totalCorrectAnswers = correctAnswerCounts.reduce((acc, val) => acc + val, 0);
-
+    const totalCorrectAnswers = scores.reduce((acc, val) => acc + val, 0);
     this.classAverage = this.studentsAttempted > 0 ? totalCorrectAnswers / this.studentsAttempted : 0;
-    this.highestScore = Math.max(...correctAnswerCounts);
-    this.lowestScore = Math.min(...correctAnswerCounts);
+    this.highestScore = Math.max(...scores);
+    this.lowestScore = Math.min(...scores);
   }
 
   viewStudentResult(studentId: string) {
@@ -118,9 +120,9 @@ export class TeacherResultComponent implements OnInit {
   }
 
   exportCSV() {
-    let csvContent = "Student Name,Correct Answers\n";
+    let csvContent = "Student Name,Score,Total Questions,Percentage\n";
     this.results.forEach((result) => {
-      csvContent += `${result.studentId},${result.result}\n`;
+      csvContent += `${result.studentName},${result.score},${result.totalQuestions},${result.percentage}%\n`;
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -133,13 +135,12 @@ export class TeacherResultComponent implements OnInit {
   }
 
   goBack() {
-    const classroomId = this.route.snapshot.queryParamMap.get('classroomId')!;
-    this.router.navigate(['/test-list', classroomId]);
+    this.router.navigate(['/test-list', this.classroomId]);
   }
 
   private findStudentsNotTested() {
     this.studentsInClassroom = this.classroom?.students || []; 
-    const studentsWithResults = this.results.map(result => result.studentId);
-    this.studentsNotTested = this.studentsInClassroom.filter(studentId => !studentsWithResults.includes(studentId));
+    const studentsWithResults = this.results.map(result => result.studentName);
+    this.studentsNotTested = this.studentsInClassroom.filter(student => !studentsWithResults.includes(student));
   }
 }

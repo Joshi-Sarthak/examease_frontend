@@ -4,7 +4,7 @@
   >
     <div>
       <h2 class="text-lg font-semibold text-gray-800">
-        {{ testData.testName }}
+        {{ test.testName }}
       </h2>
     </div>
     <div class="flex items-center text-sm text-gray-600">
@@ -27,7 +27,7 @@
       </div>
       <span class="ml-4 border rounded-md p-1 px-2"
         >Question {{ currentQuestionIndex + 1 }} of
-        {{ testData.questions.length }}</span
+        {{ test.questions.length }}</span
       >
     </div>
   </div>
@@ -38,13 +38,13 @@
     </h3>
 
     <p class="text-gray-500 mb-4">
-      {{ testData.questions[currentQuestionIndex].questionText }}
+      {{ test.questions[currentQuestionIndex].questionText }}
     </p>
 
     <div class="space-y-2">
       <button
         *ngFor="
-          let option of testData.questions[currentQuestionIndex].options;
+          let option of test.questions[currentQuestionIndex].options;
           let i = index
         "
         class="w-full p-3 border rounded-md text-left hover:bg-gray-100 hover:text-black flex items-center gap-3 transition-all"
@@ -69,7 +69,7 @@
     <button
       (click)="navigateToQuestion(currentQuestionIndex + 1)"
       class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 transition-all disabled:opacity-50"
-      [disabled]="currentQuestionIndex === testData.questions.length - 1"
+      [disabled]="currentQuestionIndex === test.questions.length - 1"
     >
       Next Question
     </button>
@@ -78,7 +78,7 @@
   <div class="flex justify-center mt-6">
     <div class="flex space-x-2">
       <button
-        *ngFor="let q of testData.questions; let i = index"
+        *ngFor="let q of test.questions; let i = index"
         class="w-8 h-8 rounded-full transition-all flex items-center justify-center text-sm"
         [ngClass]="{
           'bg-gray-800 text-white': currentQuestionIndex === i,

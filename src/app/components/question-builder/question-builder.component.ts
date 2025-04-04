@@ -79,7 +79,6 @@ export class QuestionBuilderComponent implements OnInit {
       questionText: '',
       questionNumber: this.questions.length + 1,
       correctOptionIndex: -1,
-      testId: this.testId,
       options: []
     };
     this.questions.push(newQuestion);

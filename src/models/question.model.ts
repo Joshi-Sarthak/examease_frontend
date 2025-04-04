@@ -5,6 +5,5 @@ export interface QuestionData {
     questionText: string;
     questionNumber: number;
     correctOptionIndex: number;
-    testId: string;
     options: OptionData[];
 }

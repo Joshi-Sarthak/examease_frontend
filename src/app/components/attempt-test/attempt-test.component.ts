@@ -22,7 +22,7 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
   user: any = null;
   classroomId: string = '';
   testId: string = '';
-  testData!: TestData;
+  test!: TestData;
   selectedOptions: (number | null)[] = [];
   currentQuestionIndex = 0;
   remainingTimeInSeconds = 0;
@@ -39,16 +39,28 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
     this.classroomId = this.route.snapshot.paramMap.get('classroomId') || '';
     this.testId = this.route.snapshot.paramMap.get('testId') || '';
 
-    const test = this.testService.getTestById(this.testId);
-    if (!test) {
-      alert('Test not found!');
-      this.router.navigate(['/test-list', this.classroomId]);
-      return;
+    this.test = this.testService.getTest()!;
+    
+    if (!this.test) {
+      this.testService.getTestById(this.testId).subscribe(test => {
+        if (test) {
+          this.test = test;
+        } else {
+          console.error('Test not found');
+        }
+      }, error => {
+        console.error('Error fetching test:', error);
+      });
+      
+      if (!this.test) {
+        alert('Test not found!');
+        this.router.navigate(['/test-list', this.classroomId]);
+        return;
+      }
     }
 
-    this.testData = test;
-    this.selectedOptions = new Array(test.questions.length).fill(null);
-    this.remainingTimeInSeconds = test.testTime * 60;
+    this.selectedOptions = new Array(this.test.questions.length).fill(null);
+    this.remainingTimeInSeconds = this.test.testTime * 60;
     this.startTimer();
   }
 
@@ -74,7 +86,7 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
   }
 
   navigateToQuestion(index: number): void {
-    if (index >= 0 && index < this.testData.questions.length) {
+    if (index >= 0 && index < this.test.questions.length) {
       this.currentQuestionIndex = index;
     }
   }
@@ -89,22 +101,22 @@ export class AttemptTestComponent implements OnInit, OnDestroy {
     if (!timeUp && !confirm('Are you sure you want to submit the test?')) return;
   
     let correctAnswers = 0;
-    this.testData.questions.forEach((question, i) => {
-      console.log('Selected Option:', this.selectedOptions[i]);
-      console.log('Correct Option:', question.correctOptionIndex);
+    this.test.questions.forEach((question, i) => {
       if (question.correctOptionIndex === this.selectedOptions[i]) {
         correctAnswers++;
       }
     });
   
-    const result: Result = {
-      studentId: this.user.userId || '',
-      result: correctAnswers
-    };
+    this.testService.saveResult(this.testId, this.user.userId, correctAnswers).subscribe({
+      next: () => {
+        alert('Test submitted successfully!');
+      },
+      error: (err) => {
+        alert(err);
+      }
+    });
   
-    this.testService.saveResult(this.testId, result);
-  
-    alert(`Test Submitted! You got ${correctAnswers} out of ${this.testData.questions.length} correct.`);
+    alert(`Test Submitted! You got ${correctAnswers} out of ${this.test.questions.length} correct.`);
     this.router.navigate(['/test-list', this.classroomId]);
   }
   
