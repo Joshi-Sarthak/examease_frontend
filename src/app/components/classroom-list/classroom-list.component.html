@@ -97,10 +97,12 @@
 
   <!-- Create Classroom Modal -->
   <div
-    class="fixed inset-0 bg-black bg-opacity-100 flex justify-center items-center"
+    class="fixed inset-0 backdrop-blur-xs bg-opacity-100 flex justify-center items-center"
     *ngIf="showCreatePrompt"
   >
-    <div class="bg-white rounded-xl p-6 w-[400px] shadow-lg">
+    <div
+      class="bg-white rounded-xl p-6 w-[400px] shadow-xl border border-gray-400"
+    >
       <!-- Modal Header -->
       <div class="flex justify-between items-center mb-3">
         <h3 class="text-xl font-bold text-black">Create Classroom</h3>
@@ -110,9 +112,6 @@
       </div>
 
       <!-- Modal Description -->
-      <p class="text-gray-500 text-sm mb-4">
-        Enter a name for your new classroom.
-      </p>
 
       <!-- Input Field -->
       <label for="classroomName" class="text-black font-medium text-sm"
@@ -146,10 +145,12 @@
 
   <!-- Join Classroom Modal -->
   <div
-    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+    class="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex justify-center items-center"
     *ngIf="showJoinPrompt"
   >
-    <div class="bg-white rounded-xl p-6 w-[400px] shadow-lg">
+    <div
+      class="bg-white rounded-xl p-6 w-[400px] shadow-xl border border-gray-400"
+    >
       <!-- Modal Header -->
       <div class="flex justify-between items-center mb-3">
         <h3 class="text-xl font-bold text-black">Join Classroom</h3>
@@ -159,9 +160,6 @@
       </div>
 
       <!-- Modal Description -->
-      <p class="text-gray-500 text-sm mb-4">
-        Enter the classroom code provided by your teacher.
-      </p>
 
       <!-- Input Field -->
       <label for="classroomCode" class="text-black font-medium text-sm"
