@@ -30,7 +30,7 @@
         </li>
       </ul>
       <button
-        class="bg-black text-white px-4 py-2 rounded-md mt-4 w-full hover:opacity-80 transition"
+        class="bg-neutral-800 text-white px-4 py-2 rounded-md mt-4 w-full hover:opacity-80 transition"
         (click)="addNewQuestion()"
       >
         ➕ Add Question
@@ -55,7 +55,7 @@
 
       <div class="select-image-container" *ngIf="!imageChangedEvent">
         <button
-          class="bg-black text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+          class="bg-transparent border border-neutral-800 text-neutral-900 px-4 py-2 rounded-md transition hover:bg-neutral-800 hover:text-white"
           (click)="openFilePicker()"
         >
           Select Image for Cropping
@@ -70,17 +70,17 @@
         ></textarea>
       </div>
 
-      <div class="flex gap-3 mt-4">
+      <div class="flex gap-3">
         <button
-          class="bg-gray-700 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+          class="bg-neutral-900 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
           (click)="extractTextFromSelectedArea('question', -1)"
         >
           Extract Text from Image
         </button>
       </div>
 
-      <div class="mt-6">
-        <h3 class="text-lg font-semibold mb-3">Options</h3>
+      <div class="mt-16">
+        <h3 class="text-xl mb-3 text-center">Options</h3>
         <ul class="space-y-4">
           <li
             *ngFor="let option of currentQuestion.options; let i = index"
@@ -93,15 +93,15 @@
                 placeholder="Enter option text"
               />
               <button
-                class="text-red-500 hover:text-red-700 transition"
+                class="text-red-500 hover:text-red-700 transition inline"
                 (click)="removeOption(i)"
               >
-                🗑
+                Delete
               </button>
             </div>
             <div class="flex gap-3 mt-2">
               <button
-                class="bg-gray-700 text-white px-4 py-2 rounded-md hover:opacity-80 transition"
+                class="bg-transparent border border-neutral-800 text-neutral-900 px-4 py-2 rounded-md transition hover:bg-neutral-800 hover:text-white"
                 (click)="extractTextFromSelectedArea('option', i)"
               >
                 Extract Text
@@ -114,7 +114,7 @@
           class="bg-black text-white px-4 py-2 rounded-md mt-4 hover:opacity-80 transition"
           (click)="addOption()"
         >
-          ➕ Add Option
+          Add Option
         </button>
 
         <div class="mt-6">

@@ -21,7 +21,7 @@
   <!-- Classrooms Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     <div
-      class="bg-white relative rounded-xl shadow-md p-5 hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+      class="bg-white relative rounded-xl shadow-md p-5 hover:shadow-lg transition cursor-pointer flex flex-col justify-between border border-gray-200"
       *ngFor="let classroom of classrooms"
       (click)="openClassroom(classroom)"
     >
@@ -45,11 +45,11 @@
         </span>
       </p>
       <p
-        class="text-sm text-gray-600 mt-1 font-medium"
+        class="text-sm text-gray-600 mt-6 font-medium"
         *ngIf="classroom.teacherId === user.userId"
       >
         Code:
-        <span class="bg-gray-200 px-2 py-1 rounded font-mono">
+        <span class="bg-gray-200 px-2 py-1 rounded font-mono ml-1">
           {{ classroom.classroomCode }}
         </span>
       </p>
@@ -61,14 +61,14 @@
       >
         <button
           *ngIf="classroom.teacherId === user.userId"
-          class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          class="block w-full text-left px-4 py-2 text-sm text-gray-500 hover:bg-gray-100"
           (click)="copyClassroomCode(classroom.classroomCode); closeDropdown()"
         >
           📋 Copy Code
         </button>
         <button
           *ngIf="classroom.teacherId === user.userId"
-          class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+          class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-100"
           (click)="
             confirmDeleteClassroom(classroom.classroomId); closeDropdown()
           "
@@ -97,10 +97,12 @@
 
   <!-- Create Classroom Modal -->
   <div
-    class="fixed inset-0 bg-black bg-opacity-100 flex justify-center items-center"
+    class="fixed inset-0 backdrop-blur-xs bg-opacity-100 flex justify-center items-center"
     *ngIf="showCreatePrompt"
   >
-    <div class="bg-white rounded-xl p-6 w-[400px] shadow-lg">
+    <div
+      class="bg-white rounded-xl p-6 w-[400px] shadow-xl border border-gray-400"
+    >
       <!-- Modal Header -->
       <div class="flex justify-between items-center mb-3">
         <h3 class="text-xl font-bold text-black">Create Classroom</h3>
@@ -110,9 +112,6 @@
       </div>
 
       <!-- Modal Description -->
-      <p class="text-gray-500 text-sm mb-4">
-        Enter a name for your new classroom.
-      </p>
 
       <!-- Input Field -->
       <label for="classroomName" class="text-black font-medium text-sm"
@@ -146,10 +145,12 @@
 
   <!-- Join Classroom Modal -->
   <div
-    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+    class="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex justify-center items-center"
     *ngIf="showJoinPrompt"
   >
-    <div class="bg-white rounded-xl p-6 w-[400px] shadow-lg">
+    <div
+      class="bg-white rounded-xl p-6 w-[400px] shadow-xl border border-gray-400"
+    >
       <!-- Modal Header -->
       <div class="flex justify-between items-center mb-3">
         <h3 class="text-xl font-bold text-black">Join Classroom</h3>
@@ -159,9 +160,6 @@
       </div>
 
       <!-- Modal Description -->
-      <p class="text-gray-500 text-sm mb-4">
-        Enter the classroom code provided by your teacher.
-      </p>
 
       <!-- Input Field -->
       <label for="classroomCode" class="text-black font-medium text-sm"

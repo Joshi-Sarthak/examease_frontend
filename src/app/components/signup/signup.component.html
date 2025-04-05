@@ -1,4 +1,12 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+<div
+  class="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4"
+>
+  <h2 class="text-gray-900 text-2xl mb-4 font-bold tracking-wide inline">
+    ExamEase
+    <p class="text-gray-700 font-thin text-lg inline italic">
+      - easiest way to create tests
+    </p>
+  </h2>
   <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
     <h2 class="text-2xl font-semibold text-gray-800 text-center mb-4">
       Sign Up
@@ -82,7 +90,7 @@
     <!-- Signup Button -->
     <button
       (click)="signup()"
-      class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-all"
+      class="w-full bg-gray-800 text-white py-3 rounded-lg font-medium hover:bg-gray-700 transition-all duration-200"
     >
       Sign Up
     </button>
@@ -90,7 +98,7 @@
     <!-- Login Link -->
     <p class="text-gray-600 text-sm text-center mt-4">
       Already have an account?
-      <a routerLink="/" class="text-blue-600 hover:underline font-medium"
+      <a routerLink="/" class="text-gray-800 hover:underline font-medium"
         >Login</a
       >
     </p>

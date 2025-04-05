@@ -1,107 +1,108 @@
-<div
-  class="flex justify-center items-center min-h-screen bg-gray-100"
-  style="overflow: hidden; height: 100vh"
->
-  <div
-    class="bg-white p-6 rounded-lg shadow w-full max-w-lg mx-auto border border-gray-300"
-  >
-    <h2 class="text-2xl font-semibold mb-6 text-black">Test Details</h2>
-    <form [formGroup]="testForm" (ngSubmit)="saveTest()" class="space-y-4">
-      <div>
-        <label for="testName" class="block font-medium text-black mb-1"
-          >Test Name:</label
-        >
-        <input
-          id="testName"
-          type="text"
-          formControlName="testName"
-          required
-          class="w-full p-2 border border-black rounded focus:outline-none focus:ring-1 focus:ring-black bg-transparent"
-        />
-        <div
-          *ngIf="
-            testForm.controls['testName'].invalid &&
-            testForm.controls['testName'].touched
-          "
-          class="text-red-500 text-sm mt-1"
-        >
-          Test Name is required
+<div class="h-screen bg-gray-100">
+  <div class="flex justify-center h-fit bg-gray-100" style="overflow: hidden">
+    <div
+      class="bg-white p-6 rounded-lg shadow w-full max-w-lg mx-auto border border-gray-300 mt-16"
+    >
+      <h2 class="text-2xl font-semibold mb-6 text-black text-center">
+        Test Details
+      </h2>
+      <form [formGroup]="testForm" (ngSubmit)="saveTest()" class="space-y-4">
+        <div>
+          <label for="testName" class="block font-medium text-black mb-1"
+            >Test Name:</label
+          >
+          <input
+            id="testName"
+            type="text"
+            formControlName="testName"
+            required
+            class="w-full p-2 border border-black rounded focus:outline-none focus:ring-1 focus:ring-black bg-transparent"
+          />
+          <div
+            *ngIf="
+              testForm.controls['testName'].invalid &&
+              testForm.controls['testName'].touched
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            Test Name is required
+          </div>
         </div>
-      </div>
 
-      <div>
-        <label for="startFrom" class="block font-medium text-black mb-1"
-          >Start Time:</label
-        >
-        <input
-          id="startFrom"
-          type="datetime-local"
-          formControlName="startFrom"
-          required
-          class="w-full p-2 border border-black rounded focus:outline-none focus:ring-1 focus:ring-black bg-transparent"
-        />
-        <div
-          *ngIf="
-            testForm.controls['startFrom'].invalid &&
-            testForm.controls['startFrom'].touched
-          "
-          class="text-red-500 text-sm mt-1"
-        >
-          Start Time is required
+        <div>
+          <label for="startFrom" class="block font-medium text-black mb-1"
+            >Start Time:</label
+          >
+          <input
+            id="startFrom"
+            type="datetime-local"
+            formControlName="startFrom"
+            required
+            class="w-full p-2 border border-black rounded focus:outline-none focus:ring-1 focus:ring-black bg-transparent"
+          />
+          <div
+            *ngIf="
+              testForm.controls['startFrom'].invalid &&
+              testForm.controls['startFrom'].touched
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            Start Time is required
+          </div>
         </div>
-      </div>
 
-      <div>
-        <label for="deadlineTime" class="block font-medium text-black mb-1"
-          >Deadline:</label
-        >
-        <input
-          id="deadlineTime"
-          type="datetime-local"
-          formControlName="deadlineTime"
-          required
-          class="w-full p-2 border border-black rounded focus:outline-none focus:ring-1 focus:ring-black bg-transparent"
-        />
-        <div
-          *ngIf="
-            testForm.controls['deadlineTime'].invalid &&
-            testForm.controls['deadlineTime'].touched
-          "
-          class="text-red-500 text-sm mt-1"
-        >
-          Deadline Time is required
+        <div>
+          <label for="deadlineTime" class="block font-medium text-black mb-1"
+            >Deadline:</label
+          >
+          <input
+            id="deadlineTime"
+            type="datetime-local"
+            formControlName="deadlineTime"
+            required
+            class="w-full p-2 border border-black rounded focus:outline-none focus:ring-1 focus:ring-black bg-transparent"
+          />
+          <div
+            *ngIf="
+              testForm.controls['deadlineTime'].invalid &&
+              testForm.controls['deadlineTime'].touched
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            Deadline Time is required
+          </div>
         </div>
-      </div>
 
-      <div>
-        <label for="testTime" class="block font-medium text-black mb-1"
-          >Duration (minutes):</label
-        >
-        <input
-          id="testTime"
-          type="number"
-          formControlName="testTime"
-          required
-          class="w-full p-2 border border-black rounded focus:outline-none focus:ring-1 focus:ring-black bg-transparent"
-        />
-        <div
-          *ngIf="
-            testForm.controls['testTime'].invalid &&
-            testForm.controls['testTime'].touched
-          "
-          class="text-red-500 text-sm mt-1"
-        >
-          Duration must be at least 1 minute
+        <div>
+          <label for="testTime" class="block font-medium text-black mb-1"
+            >Duration (minutes):</label
+          >
+          <input
+            id="testTime"
+            type="number"
+            formControlName="testTime"
+            required
+            class="w-full p-2 border border-black rounded focus:outline-none focus:ring-1 focus:ring-black bg-transparent"
+          />
+          <div
+            *ngIf="
+              testForm.controls['testTime'].invalid &&
+              testForm.controls['testTime'].touched
+            "
+            class="text-red-500 text-sm mt-1"
+          >
+            Duration must be at least 1 minute
+          </div>
         </div>
-      </div>
 
-      <button
-        type="submit"
-        [disabled]="testForm.invalid"
-        class="bg-black text-white px-6 py-2 rounded mt-4 disabled:opacity-50 hover:bg-gray-800 transition"
-      >
-        Save
-      </button>
-    </form>
+        <button
+          type="submit"
+          [disabled]="testForm.invalid"
+          class="bg-black text-white px-6 py-2 rounded mt-4 disabled:opacity-50 hover:bg-gray-800 transition"
+        >
+          Save
+        </button>
+      </form>
+    </div>
   </div>
 </div>
