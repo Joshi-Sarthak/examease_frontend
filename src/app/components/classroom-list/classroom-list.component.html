@@ -21,7 +21,7 @@
   <!-- Classrooms Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     <div
-      class="bg-white relative rounded-xl shadow-md p-5 hover:shadow-lg transition cursor-pointer flex flex-col justify-between"
+      class="bg-white relative rounded-xl shadow-md p-5 hover:shadow-lg transition cursor-pointer flex flex-col justify-between border border-gray-200"
       *ngFor="let classroom of classrooms"
       (click)="openClassroom(classroom)"
     >
@@ -45,11 +45,11 @@
         </span>
       </p>
       <p
-        class="text-sm text-gray-600 mt-1 font-medium"
+        class="text-sm text-gray-600 mt-6 font-medium"
         *ngIf="classroom.teacherId === user.userId"
       >
         Code:
-        <span class="bg-gray-200 px-2 py-1 rounded font-mono">
+        <span class="bg-gray-200 px-2 py-1 rounded font-mono ml-1">
           {{ classroom.classroomCode }}
         </span>
       </p>
@@ -61,14 +61,14 @@
       >
         <button
           *ngIf="classroom.teacherId === user.userId"
-          class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          class="block w-full text-left px-4 py-2 text-sm text-gray-500 hover:bg-gray-100"
           (click)="copyClassroomCode(classroom.classroomCode); closeDropdown()"
         >
           📋 Copy Code
         </button>
         <button
           *ngIf="classroom.teacherId === user.userId"
-          class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100"
+          class="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-100"
           (click)="
             confirmDeleteClassroom(classroom.classroomId); closeDropdown()
           "
