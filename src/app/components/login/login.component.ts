@@ -5,11 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [
-    FormsModule,
-    RouterModule,
-    CommonModule
-  ],
+  imports: [FormsModule, RouterModule, CommonModule],
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
